@@ -22,6 +22,8 @@ builder.Services.AddCorsPolicy(builder.Configuration);
 
 var app = builder.Build();
 
+await app.ApplyMigrationsAsync();
+
 app.UseForwardedHeaders();
 
 app.UseSwaggerDocumentation();
