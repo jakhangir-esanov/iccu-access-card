@@ -59,23 +59,33 @@ Repodagi fayllarni serverga ko'chiring:
 | `deploy/stacks/*.yml` | `/opt/iccu/stacks/` |
 | `deploy/nginx/conf.d/iccu.conf` | `/opt/iccu/nginx/conf.d/` |
 | `deploy/backup/backup.sh` | `/opt/iccu/backups/backup.sh` |
-| `deploy/env/iccu.env.example` | `/opt/iccu/env/iccu.env` (qiymatlarini to'ldiring) |
+## 3. iccu.env fayli
 
-## 3. Secret'lar
-
-Parollar env faylga emas, Docker secret'larga yoziladi. API ularni `/run/secrets` papkasidan o'qiydi.
+Parollar `tofan`dagidek `/opt/iccu/env/iccu.env` faylida turadi. Deploy oldidan fayl `set -a && . env/iccu.env` bilan yuklanadi, stack fayllari qiymatlarni `${...}` orqali oladi. Parollarni qo'lda yozmang, buyruq ularni o'zi yaratadi. Faqat hex ishlatiladi, chunki maxsus belgilar connection string'ni buzadi.
 
 ```bash
-openssl rand -hex 24 | docker secret create iccu_db_password -
-openssl rand -base64 48 | docker secret create iccu_jwt_signing_key -
+cd /opt/iccu && cat > env/iccu.env <<EOF
+ICCU_API_IMAGE=registry.example.uz/iccu-api:v1.0.0
+
+ICCU_DB_PASSWORD=$(openssl rand -hex 16)
+ICCU_JWT_SIGNING_KEY=$(openssl rand -hex 32)
+EOF
 ```
 
-| Secret | Kim ishlatadi | API ichidagi kalit |
+| O'zgaruvchi | Kim ishlatadi | API ichidagi kalit |
 |---|---|---|
-| `iccu_db_password` | Postgres (`POSTGRES_PASSWORD_FILE`) va API | `Database:Password` |
-| `iccu_jwt_signing_key` | API, kamida 32 bayt | `Jwt:SigningKey` |
+| `ICCU_DB_PASSWORD` | Postgres (`POSTGRES_PASSWORD`) va API | connection string'dagi `Password` |
+| `ICCU_JWT_SIGNING_KEY` | API, kamida 32 bayt | `Jwt:SigningKey` |
 
-Secret'ni almashtirish uchun yangi nom bilan yaratib, stack faylida `source`ni o'zgartirish kerak. Swarm ishlab turgan secret'ni tahrirlashga ruxsat bermaydi.
+Faylni faqat root tahrirlaydigan, `deploy` esa faqat o'qiy oladigan qiling:
+
+```bash
+sudo chown -R root:deploy /opt/iccu/env
+sudo chmod 750 /opt/iccu/env
+sudo chmod 640 /opt/iccu/env/iccu.env
+```
+
+`ICCU_DB_PASSWORD` faqat birinchi deploy'da, Postgres volume'i bo'sh bo'lganda o'rnatiladi. Keyin uni faylda o'zgartirish bazadagi parolni o'zgartirmaydi.
 
 ## 4. TLS sertifikati
 

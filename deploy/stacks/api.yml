@@ -2,12 +2,8 @@ services:
   iccu-api:
     image: ${ICCU_API_IMAGE}
     environment:
-      ConnectionStrings__Database: Host=postgres;Port=5432;Database=iccu;Username=iccu
-    secrets:
-      - source: iccu_db_password
-        target: Database__Password
-      - source: iccu_jwt_signing_key
-        target: Jwt__SigningKey
+      ConnectionStrings__Database: "Host=postgres;Port=5432;Database=iccu;Username=iccu;Password=${ICCU_DB_PASSWORD}"
+      Jwt__SigningKey: ${ICCU_JWT_SIGNING_KEY}
     volumes:
       - type: bind
         source: /opt/iccu/files
@@ -42,10 +38,4 @@ services:
 
 networks:
   iccu-net:
-    external: true
-
-secrets:
-  iccu_db_password:
-    external: true
-  iccu_jwt_signing_key:
     external: true

@@ -4,10 +4,8 @@ services:
     environment:
       POSTGRES_DB: iccu
       POSTGRES_USER: iccu
-      POSTGRES_PASSWORD_FILE: /run/secrets/iccu_db_password
+      POSTGRES_PASSWORD: ${ICCU_DB_PASSWORD}
       TZ: Asia/Tashkent
-    secrets:
-      - iccu_db_password
     volumes:
       - postgres-data:/var/lib/postgresql/data
     networks:
@@ -31,8 +29,4 @@ volumes:
 
 networks:
   iccu-net:
-    external: true
-
-secrets:
-  iccu_db_password:
     external: true

@@ -24,7 +24,7 @@ Bog'lanish yo'nalishi `test/Iccu.ArchitectureTests` bilan majburlanadi. Qoida bu
 - **Endpoint** — `IEndpoint` klassi, so'rov modeli `Requests/` papkasida alohida `internal sealed record`. `.Produces<Result<T>>`, `.WithTags("...")`, `CancellationToken`siz.
 - **DI**: `tofan`dagi `StorageModule` kabi Infrastructure endpoint'larni (`AddEndpoints(Presentation.AssemblyReference.Assembly)`), rate limiting, SignalR, forwarded headers va so'rov hajmi limitini ro'yxatga oladi. `Program.cs` faqat `AddInfrastructure` va `MapEndpoints` chaqiradi.
 
-ICCU'ga xos, `tofan`da yo'q qismlar: refresh token HttpOnly cookie'da, login va ochiq endpoint'larda rate limiting, SignalR, Docker secret'lar (`/run/secrets`), forwarded headers. 500 xatoda `exception.Message` javobga chiqarilmaydi (`tofan`dan farqli).
+ICCU'ga xos, `tofan`da yo'q qismlar: refresh token HttpOnly cookie'da, login va ochiq endpoint'larda rate limiting, SignalR, forwarded headers. 500 xatoda `exception.Message` javobga chiqarilmaydi (`tofan`dan farqli).
 
 Har bir qatlamdagi umumiy qism `Common` papkasida turadi, masalan `Domain/Common`, `Application/Common`, `Presentation/Common`. Domain'dagi barcha enum'lar `Domain/Common/Enums` ichida.
 
@@ -60,7 +60,7 @@ Foydalanuvchi tushunchasi bitta: `User` (`Admin` yoki `Receptionist`). Alohida "
 - **Database**: `ApplicationDbContext`da `DbSet { get; set; }` va har bir konfiguratsiya `ApplyConfiguration(new ...)` bilan ulanadi. Konfiguratsiyalar `x =>` bilan, `ToTable`siz yoziladi: jadval nomi `DbSet` nomidan snake_case bo'lib chiqadi.
 - **ObjectStorage**: `LocalDiskFileStore`, `StorageOptions` (`Storage:RootPath`).
 - **BackgroundJobs**: Hangfire (PostgreSQL storage, `hangfire` sxemasi). Har bir vazifa `XJob` + `XJobScheduler` (`IHostedService`, cron) juftligi: `ExpireRegistrationRequestsJob` har 15 daqiqada, `DeleteUnusedFilesJob` har soatda. Job faqat MediatR command'ini yuboradi, biznes mantiq command ichida qoladi. Dashboard `/hangfire`, faqat Development'da yoqiladi.
-- **Configuration**: `GetConnectionStringOrThrow`. Docker secret'dan kelgan `Database:Password` connection string'ga qo'shiladi.
+- **Configuration**: `GetConnectionStringOrThrow`. Serverda connection string va JWT kaliti `tofan`dagidek environment variable orqali keladi (`deploy/stacks/api.yml`).
 
 ## Yozish va o'qish
 

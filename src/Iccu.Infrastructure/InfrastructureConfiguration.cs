@@ -51,7 +51,7 @@ public static class InfrastructureConfiguration
 
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        string databaseConnectionString = GetDatabaseConnectionString(configuration);
+        string databaseConnectionString = configuration.GetConnectionStringOrThrow("Database");
 
         services.AddAuthenticationInternal();
 
@@ -159,14 +159,4 @@ public static class InfrastructureConfiguration
         RateLimitPartition.GetFixedWindowLimiter(
             context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
             _ => new FixedWindowRateLimiterOptions { PermitLimit = permitLimit, Window = window });
-
-    private static string GetDatabaseConnectionString(IConfiguration configuration)
-    {
-        string connectionString = configuration.GetConnectionStringOrThrow("Database");
-        string? password = configuration["Database:Password"];
-
-        return string.IsNullOrWhiteSpace(password)
-            ? connectionString
-            : new NpgsqlConnectionStringBuilder(connectionString) { Password = password.Trim() }.ConnectionString;
-    }
 }

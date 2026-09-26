@@ -255,7 +255,7 @@ Ro'yxatlarda pasport raqami maskalangan holda chiqadi (`AA***4567`). To'liq raqa
 
 - Parollar PBKDF2 bilan hash qilinadi (ASP.NET `PasswordHasher`). Login'da foydalanuvchi mavjud bo'lmasa ham hash tekshiriladi, shunda javob vaqtidan login borligini bilib bo'lmaydi.
 - Refresh token faqat HttpOnly + Secure + SameSite=Strict cookie'da turadi. Bazada uning faqat SHA-256 hash'i saqlanadi. Har yangilanishda rotatsiya qilinadi.
-- JWT imzolash kaliti va baza paroli Docker secret yoki env orqali beriladi, repoga yozilmaydi.
+- JWT imzolash kaliti va baza paroli serverdagi `/opt/iccu/env/iccu.env` faylidan environment variable orqali beriladi (`tofan` kabi), repoga yozilmaydi.
 - Rate limiting: login uchun daqiqasiga 10 ta, ochiq anketa uchun 10 daqiqada 5 ta (IP bo'yicha, nginx ortida `X-Forwarded-For` hisobga olinadi).
 - Yuklangan fayl kengaytma, hajm (8 MB) va magic-byte imzosi bo'yicha tekshiriladi. Fayl mazmuni faqat avtorizatsiya bilan ochiladi. Ishlatilmayotgan fayllar 24 soatdan keyin avtomatik o'chiriladi.
 - `/admin` faqat kutubxona tarmog'idan ochiladi.
