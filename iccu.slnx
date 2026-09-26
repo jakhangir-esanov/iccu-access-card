@@ -1,0 +1,19 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="CLAUDE.md" />
+    <File Path="Directory.Build.props" />
+    <File Path="Dockerfile" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Iccu.Api/Iccu.Api.csproj" />
+    <Project Path="src/Iccu.Application/Iccu.Application.csproj" />
+    <Project Path="src/Iccu.Domain/Iccu.Domain.csproj" />
+    <Project Path="src/Iccu.Infrastructure/Iccu.Infrastructure.csproj" />
+    <Project Path="src/Iccu.Presentation/Iccu.Presentation.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/Iccu.ArchitectureTests/Iccu.ArchitectureTests.csproj" />
+    <Project Path="test/Iccu.UnitTests/Iccu.UnitTests.csproj" />
+  </Folder>
+</Solution>
