@@ -291,3 +291,5 @@ secrets/
 
 # Local development storage
 .local/
+
+!deploy/backup/

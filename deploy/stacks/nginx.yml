@@ -1,0 +1,46 @@
+services:
+  nginx:
+    image: nginx:1.27-alpine
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host
+    volumes:
+      - type: bind
+        source: /opt/iccu/nginx/conf.d
+        target: /etc/nginx/conf.d
+        read_only: true
+      - type: bind
+        source: /opt/iccu/nginx/certs
+        target: /etc/nginx/certs
+        read_only: true
+      - type: bind
+        source: /opt/iccu/nginx/acme
+        target: /var/www/acme
+        read_only: true
+      - type: bind
+        source: /opt/iccu/web
+        target: /usr/share/nginx/html
+        read_only: true
+    networks:
+      - iccu-net
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      update_config:
+        order: stop-first
+        failure_action: rollback
+      restart_policy:
+        condition: any
+        delay: 5s
+
+networks:
+  iccu-net:
+    external: true

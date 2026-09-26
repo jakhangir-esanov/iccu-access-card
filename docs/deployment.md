@@ -29,6 +29,8 @@ Telefonlar (QR) va kutubxona kompyuterlari
    [ postgres:5432 ]  tashqariga chiqmaydi
 ```
 
+nginx portlari `mode: host` bilan ochiladi. Swarm'ning ingress tarmog'i mijoz IP'sini almashtirib yuboradi, u holda IP allowlist ham, rate limiting ham ishlamay qoladi.
+
 Admin API'ni kutubxona tarmog'i bilan cheklash `deploy/nginx/conf.d/iccu.conf` faylidagi `geo $is_library_network` blokida sozlanadi. U yerda standart xususiy tarmoqlar yozilgan. **Kutubxonaning haqiqiy IP diapazonini qo'yish shart.**
 
 ## 1. Docker va Swarm
@@ -41,7 +43,7 @@ docker network create --driver overlay --attachable iccu-net
 ## 2. Papkalar
 
 ```bash
-sudo mkdir -p /opt/iccu/{stacks,env,files,backups,web,nginx/conf.d,nginx/certs}
+sudo mkdir -p /opt/iccu/{stacks,env,files,backups,web,nginx/conf.d,nginx/certs,nginx/acme}
 sudo chown -R deploy:deploy /opt/iccu
 sudo chown 1654:1654 /opt/iccu/files
 ```
@@ -79,7 +81,7 @@ Secret'ni almashtirish uchun yangi nom bilan yaratib, stack faylida `source`ni o
 
 nginx `/opt/iccu/nginx/certs/fullchain.pem` va `privkey.pem` fayllarini kutadi. Uchta yo'l bor:
 
-1. **Domen bor**: Let's Encrypt (certbot, `tofan`dagi kabi webroot usuli).
+1. **Domen bor**: Let's Encrypt (certbot, `tofan`dagi kabi webroot usuli, webroot: `/opt/iccu/nginx/acme`).
 2. **Ochiq IP bor, domen yo'q**: `<IP>.sslip.io` nomi bilan Let's Encrypt (`tofan`da ishlatilgan usul).
 3. **Faqat kutubxona Wi-Fi'si**: Markazning ichki CA'si yoki self-signed sertifikat. Bu holda telefonlar ogohlantirish ko'rsatadi, CA'ni qurilmalarga o'rnatish kerak bo'ladi.
 

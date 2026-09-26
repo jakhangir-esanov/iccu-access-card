@@ -300,7 +300,8 @@ Internet / kutubxona tarmog'i
 | Presentation va Api: `tofan` bilan bir xil (Result javoblar, Requests/, Swashbuckle) | Tayyor, smoke test o'tdi |
 | Testlar: arxitektura (23) va unit (113) | Tayyor, hammasi o'tadi |
 | Dockerfile | Tayyor |
-| `CLAUDE.md`, `.claude/` (agent va skill'lar), `deploy/` (Swarm stack) | Hozir repoda yo'q, qayta tiklash kerak |
+| `deploy/`: Swarm stack'lari, nginx, backup skripti | Tayyor |
+| `CLAUDE.md`, `.claude/` (agent va skill'lar) | Hozir repoda yo'q, qayta tiklash kerak |
 | Frontend: React admin panel va ochiq anketa (Figma shablon asosida) | Backend'dan keyin |
 | Karta dizayni va printer kalibrovkasi | Printer modeli aniqlangach |
 
