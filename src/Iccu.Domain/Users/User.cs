@@ -28,8 +28,6 @@ public sealed class User
 
     public DateTime CreatedAt { get; private set; }
 
-    public DateTime PasswordChangedAt { get; private set; }
-
     public static User Create(
         string username,
         string fullName,
@@ -45,8 +43,7 @@ public sealed class User
             Role = role,
             PasswordHash = passwordHash,
             IsActive = true,
-            CreatedAt = utcNow,
-            PasswordChangedAt = utcNow
+            CreatedAt = utcNow
         };
     }
 
@@ -57,10 +54,9 @@ public sealed class User
         IsActive = isActive;
     }
 
-    public void ChangePassword(string passwordHash, DateTime utcNow)
+    public void ChangePassword(string passwordHash)
     {
         PasswordHash = passwordHash;
-        PasswordChangedAt = utcNow;
     }
 
     public void RecordFailedLogin()

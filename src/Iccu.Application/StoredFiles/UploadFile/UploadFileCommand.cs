@@ -50,7 +50,6 @@ internal sealed class UploadFileCommandHandler(
         }
 
         var storedFile = StoredFile.Create(
-            request.FileName,
             extension,
             ContentTypeFor(extension),
             request.Size,

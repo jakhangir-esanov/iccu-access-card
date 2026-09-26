@@ -47,7 +47,7 @@ Entity'lar `sealed`, public konstruktori yo'q, faqat factory va holatni o'zgarti
 
 Barcha qoidalar tegishli command yoki query handler'ining ichida yoziladi: karta muddati (2 yil), karta raqami formati (`D7`), login bloklash (5 urinish, 15 daqiqa), refresh token rotatsiyasi, ariza muddati (24 soat) va hokazo. Qiymatlar handler ichidagi `private const` sifatida turadi. `CardNumber`, `LoginPolicy`, `ReaderFilter` kabi alohida yordamchi klasslar ataylab yo'q.
 
-Yagona istisno — bir nechta handler aynan bir xil ishlatadigan kod. Masalan `ExportReaders` filtr SQL'ini `GetReadersQueryHandler.FilterSql` va `FilterParameters`dan oladi.
+Yagona istisno — bir nechta handler aynan bir xil ishlatadigan kod. Masalan `ExportReaders` filtr SQL'ini `GetReadersQueryHandler.ReadersCte` va `BuildFilter`dan oladi.
 
 Foydalanuvchi tushunchasi bitta: `User` (`Admin` yoki `Receptionist`). Alohida "staff" tushunchasi yo'q.
 
@@ -75,10 +75,10 @@ Query javoblari `tofan`dagidek positional record'lar (`sealed record UserRespons
 
 `tofan`dagidek ikkiga bo'lingan:
 
-- `Common/` — `tofan`ning Common.Application'i: Behaviors, Clock, Data (`IDbConnectionFactory`), Exceptions (`ApplicationException`), Export, Extensions (`RuleBuilderExtensions`, `SortColumnExtensions`), Messaging (`ICommand`, `IQuery`, `IPagedListQuery`), Paging (`PagingRequest<T>`, `PagedList<T>`). Bundan tashqari ICCU'ga xos `Validation/`.
-- `Abstractions/` — modulga xos interfeyslar: Authentication (`ICurrentUser.UserId`, `IPasswordHasher`, `ITokenService`, `Policies`), Data (`IUnitOfWork` + `BeginTransactionAsync`), Storage (`IFileStore`), Notifications.
+- `Common/` — `tofan`ning Common.Application'i: Behaviors, Clock, Data (`IDbConnectionFactory`), Export, Extensions (`RuleBuilderExtensions`, `SortColumnExtensions`), Messaging (`ICommand`, `IQuery`, `IPagedListQuery`), Paging (`PagingRequest<T>`, `PagedList<T>`). Bundan tashqari ICCU'ga xos `Validation/`.
+- `Abstractions/` — modulga xos interfeyslar: Authentication (`ICurrentUser.UserId`, `IPasswordHasher`, `ITokenService`, `Policies`), Data (`IUnitOfWork`), Storage (`IFileStore`), Notifications.
 
-Handler parametri har doim `request`, validator'lar `x =>` bilan yoziladi. Ro'yxat query'lari `tofan`dagi `GetSoldiersQuery` shaklida: CTE, `List<string> conditions`, `dataSql` + `countSql`, `ORDER BY {paging.SortBy} {paging.SortDirection}`, `OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY`. Filtr maydonlari alohida `XFilter` record'siz, query record'ining o'zida turadi. `ExportReaders` filtrni `GetReadersQueryHandler.BuildFilter`dan oladi. DI (MediatR, behavior'lar, validator'lar) Infrastructure'da qoladi.
+Handler parametri har doim `request`, validator'lar `x =>` bilan yoziladi. Ro'yxat query'lari `tofan`dagi `GetSoldiersQuery` shaklida: CTE, `List<string> conditions`, `dataSql` + `countSql`, `ORDER BY {paging.SortField} {paging.SortDirection}`, `OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY`. Filtr maydonlari alohida `XFilter` record'siz, query record'ining o'zida turadi. `ExportReaders` filtrni `GetReadersQueryHandler.BuildFilter`dan oladi. DI (MediatR, behavior'lar, validator'lar) Infrastructure'da qoladi.
 
 ## SQL va Sonar S2077
 
@@ -91,11 +91,12 @@ Yangi dinamik so'rov yozishda ham shu ikki qoidaga amal qilinadi.
 
 ## Pipeline
 
-MediatR (12.5, Apache 2.0). `ICommand`, `IQuery`, `IPagedListQuery` va ularning handler'lari MediatR'ning `IRequest`/`IRequestHandler` interfeyslari ustiga qurilgan. Endpoint'lar `ISender` orqali yuboradi. Uchta behavior `AddOpenBehavior` bilan shu tartibda ro'yxatga olingan:
+MediatR (12.5, Apache 2.0). `ICommand`, `IQuery`, `IPagedListQuery` va ularning handler'lari MediatR'ning `IRequest`/`IRequestHandler` interfeyslari ustiga qurilgan. Endpoint'lar `ISender` orqali yuboradi. Ikkita behavior `AddOpenBehavior` bilan shu tartibda ro'yxatga olingan:
 
-1. `ExceptionHandlingPipelineBehavior` — xatoni log qiladi va `ApplicationException`ga o'raydi (bekor qilingan so'rovlar bundan mustasno).
-2. `RequestLoggingPipelineBehavior` — faqat `Result` qaytaradigan so'rovlar uchun; xato bilan tugagan so'rov `Error` darajasida yoziladi (`tofan` kabi).
-3. `ValidationPipelineBehavior` — FluentValidation natijasini `ValidationError`ga aylantiradi. `tofan`dan farqli ravishda query'lar ham tekshiriladi (hisobot davri validator'i uchun).
+1. `RequestLoggingPipelineBehavior` — faqat `Result` qaytaradigan so'rovlar uchun; xato bilan tugagan so'rov `Error` darajasida yoziladi (`tofan` kabi).
+2. `ValidationPipelineBehavior` — FluentValidation natijasini `ValidationError`ga aylantiradi. `tofan`dan farqli ravishda query'lar ham tekshiriladi (hisobot davri validator'i uchun).
+
+Kutilmagan xatolar behavior'da ushlanmaydi: ularni Api'dagi `GlobalExceptionHandler` bir marta log qiladi va 500 (unique index buzilsa 409) qaytaradi.
 
 Application qatlamida DI konfiguratsiyasi yo'q. MediatR, behavior'lar va validator'lar `InfrastructureConfiguration.AddMessaging()`da `AssemblyReference.Assembly` orqali ro'yxatga olinadi. Handler va validator'lar `internal`.
 

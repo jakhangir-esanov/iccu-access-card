@@ -1,7 +1,6 @@
 namespace Iccu.Infrastructure.Database;
 
 using Iccu.Domain.Users;
-using System.Data.Common;
 using Iccu.Domain.Readers;
 using Iccu.Domain.StoredFiles;
 using Iccu.Domain.RefreshTokens;
@@ -12,7 +11,6 @@ using Iccu.Infrastructure.StoredFiles;
 using Iccu.Domain.RegistrationRequests;
 using Iccu.Infrastructure.RefreshTokens;
 using Iccu.Application.Abstractions.Data;
-using Microsoft.EntityFrameworkCore.Storage;
 using Iccu.Infrastructure.RegistrationRequests;
 
 public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options), IUnitOfWork
@@ -50,15 +48,5 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
         modelBuilder.ApplyConfiguration(new UserConfiguration());
         modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
         modelBuilder.ApplyConfiguration(new StoredFileConfiguration());
-    }
-
-    public async Task<DbTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
-    {
-        if (Database.CurrentTransaction is not null)
-        {
-            await Database.CurrentTransaction.DisposeAsync();
-        }
-
-        return (await Database.BeginTransactionAsync(cancellationToken)).GetDbTransaction();
     }
 }

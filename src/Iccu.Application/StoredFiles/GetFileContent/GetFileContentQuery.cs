@@ -9,7 +9,7 @@ using Iccu.Application.Abstractions.Storage;
 
 public sealed record GetFileContentQuery(Guid Id) : IQuery<FileContentResponse>;
 
-public sealed record FileContentResponse(Stream Content, string ContentType, string OriginalName);
+public sealed record FileContentResponse(Stream Content, string ContentType);
 
 internal sealed class GetFileContentQueryHandler(
     IDbConnectionFactory dbConnectionFactory,
@@ -23,8 +23,7 @@ internal sealed class GetFileContentQueryHandler(
             $"""
             SELECT
                 storage_path AS {nameof(ContentRow.StoragePath)},
-                content_type AS {nameof(ContentRow.ContentType)},
-                original_name AS {nameof(ContentRow.OriginalName)}
+                content_type AS {nameof(ContentRow.ContentType)}
             FROM iccu.stored_files
             WHERE id = @Id
             """;
@@ -43,8 +42,8 @@ internal sealed class GetFileContentQueryHandler(
             return Result.Failure<FileContentResponse>(StoredFileErrors.NotFound);
         }
 
-        return new FileContentResponse(content, row.ContentType, row.OriginalName);
+        return new FileContentResponse(content, row.ContentType);
     }
 
-    private sealed record ContentRow(string StoragePath, string ContentType, string OriginalName);
+    private sealed record ContentRow(string StoragePath, string ContentType);
 }

@@ -21,11 +21,6 @@ internal sealed class DeleteReaderCommandHandler(
             return Result.Failure(ReaderErrors.NotFound);
         }
 
-        if (reader.DeletedAt is not null)
-        {
-            return Result.Failure(ReaderErrors.AlreadyDeleted);
-        }
-
         reader.MarkDeleted(dateTimeProvider.UtcNow);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);

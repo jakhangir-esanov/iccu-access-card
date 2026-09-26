@@ -5,8 +5,6 @@ using System.Text.RegularExpressions;
 
 public static partial class DocumentNumber
 {
-    public const int MaxLength = 20;
-
     private static readonly char[] Separators = [' ', '-', '№', '#', '.'];
 
     public static string Normalize(string? documentNumber)

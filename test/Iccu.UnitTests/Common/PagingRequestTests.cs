@@ -17,15 +17,6 @@ public class PagingRequestTests
         Assert.Equal(expectedRows, paging.Rows);
     }
 
-    [Fact]
-    public void Page_Should_BeDerivedFromFirstAndRows()
-    {
-        var paging = new PagingRequest<ReaderListItemResponse>(40, 20, "card_number", 1);
-
-        Assert.Equal(3, paging.Page);
-        Assert.Equal(20, paging.PageSize);
-    }
-
     [Theory]
     [InlineData("LAST_NAME", -1, "last_name", "desc")]
     [InlineData("created_at", 7, "created_at", "asc")]
@@ -33,7 +24,7 @@ public class PagingRequestTests
     {
         var paging = new PagingRequest<ReaderListItemResponse>(0, 10, sortField, sortOrder);
 
-        Assert.Equal(expectedField, paging.SortBy);
+        Assert.Equal(expectedField, paging.SortField);
         Assert.Equal(expectedDirection, paging.SortDirection);
     }
 
@@ -45,6 +36,6 @@ public class PagingRequestTests
     {
         var paging = new PagingRequest<ReaderListItemResponse>(0, 10, sortField, 1);
 
-        Assert.Equal("id", paging.SortBy);
+        Assert.Equal("id", paging.SortField);
     }
 }

@@ -7,14 +7,13 @@ internal sealed class HangfireDashboardOptions
     internal const string SectionName = "Hangfire:Dashboard";
 
     public bool Enabled { get; set; }
-
-    public string Path { get; set; } = "/hangfire";
-
-    public string Title { get; set; } = "ICCU Jobs";
 }
 
 internal static class HangfireExtensions
 {
+    private const string DashboardPath = "/hangfire";
+    private const string DashboardTitle = "ICCU Jobs";
+
     internal static WebApplication UseJobsDashboard(this WebApplication app)
     {
         HangfireDashboardOptions options = app.Configuration
@@ -27,10 +26,10 @@ internal static class HangfireExtensions
         }
 
         app.UseHangfireDashboard(
-            options.Path,
+            DashboardPath,
             new DashboardOptions
             {
-                DashboardTitle = options.Title
+                DashboardTitle = DashboardTitle
             });
 
         return app;

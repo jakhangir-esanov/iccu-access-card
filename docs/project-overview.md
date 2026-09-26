@@ -223,7 +223,7 @@ Barcha jadvallar `iccu` sxemasida.
 | `readers` | `id` (Guid v7), `card_number` (sequence), toifa, F.I.Sh., `birth_date`, `phone`, `document_type`, `document_number`, `photo_file_id`, `source`, `issued_on`, `expires_on`, `print_count`, `created_at`, `created_by`, `updated_at`, `deleted_at` | `card_number` unique; `(document_type, document_number)` unique (o'chirilmaganlar orasida); `search_text` va `phone` bo'yicha trigram GIN; `expires_on`, `created_at` |
 | `registration_requests` | `id`, `code` (4 xonali, aylanuvchi sequence), `status`, shaxs maydonlari, `photo_file_id`, `submitted_at`, `expires_at`, `reviewed_*`, `rejection_reason`, `reader_id` | `code` unique (faqat Pending orasida); `status`, `submitted_at` |
 | `users` | `id`, `username` (unique), `full_name`, `password_hash`, `role`, `is_active`, lockout maydonlari | `username` unique |
-| `refresh_tokens` | `id`, `user_id`, `token_hash` (SHA-256), `expires_at`, `revoked_at`, `replaced_by_token_id` | `token_hash` unique |
+| `refresh_tokens` | `id`, `user_id`, `token_hash` (SHA-256), `expires_at`, `revoked_at` | `token_hash` unique |
 
 Karta holati ("faol" yoki "muddati o'tgan") alohida saqlanmaydi, `expires_on` va bugungi sanadan hisoblanadi.
 
@@ -282,7 +282,7 @@ Internet / kutubxona tarmog'i
 
 - `postgres`: 1 replika, manager node'ga bog'langan, volume'da saqlanadi.
 - `iccu-api`: 1 replika. SignalR uchun shunday qoladi; ko'paytirilsa Redis backplane kerak bo'ladi. `update_config.order: start-first` bilan deploy paytida uzilish bo'lmaydi.
-- API'da data initializer yo'q: migratsiyalar ishga tushishda qo'llanmaydi, boshlang'ich ma'lumot ham yaratilmaydi. Migratsiya: `dotnet ef database update -p src/Iccu.Infrastructure -s src/Iccu.Api`.
+- API ishga tushganda migratsiyalarni o'zi qo'llaydi. Boshlang'ich ma'lumot, jumladan birinchi administrator, yaratilmaydi.
 - Backup: har kuni `pg_dump` va rasmlar papkasining `rsync` nusxasi.
 
 ---
@@ -298,10 +298,10 @@ Internet / kutubxona tarmog'i
 | Application: MediatR, behavior'lar, command/query'lar | Tayyor |
 | Infrastructure: `tofan` bilan bir xil (Hangfire job'lar, JwtBearerConfigureOptions, ObjectStorage) | Tayyor, smoke test o'tdi |
 | Presentation va Api: `tofan` bilan bir xil (Result javoblar, Requests/, Swashbuckle) | Tayyor, smoke test o'tdi |
-| Testlar: arxitektura (23) va unit (113) | Tayyor, hammasi o'tadi |
+| Testlar: arxitektura (22) va unit (123), API'ning to'liq e2e tekshiruvi | Tayyor, hammasi o'tadi |
 | Dockerfile | Tayyor |
 | `deploy/`: Swarm stack'lari, nginx, backup skripti | Tayyor |
-| `CLAUDE.md`, `.claude/` (agent va skill'lar) | Hozir repoda yo'q, qayta tiklash kerak |
+| `CLAUDE.md` | Tayyor |
 | Frontend: React admin panel va ochiq anketa (Figma shablon asosida) | Backend'dan keyin |
 | Karta dizayni va printer kalibrovkasi | Printer modeli aniqlangach |
 

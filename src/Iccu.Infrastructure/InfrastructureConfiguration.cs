@@ -64,8 +64,6 @@ public static class InfrastructureConfiguration
 
         services.TryAddScoped<IDbConnectionFactory, DbConnectionFactory>();
 
-        services.AddHttpContextAccessor();
-
         SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
 
         services.AddMessaging();
@@ -80,7 +78,6 @@ public static class InfrastructureConfiguration
         services.AddMediatR(configuration =>
         {
             configuration.RegisterServicesFromAssembly(AssemblyReference.Assembly);
-            configuration.AddOpenBehavior(typeof(ExceptionHandlingPipelineBehavior<,>));
             configuration.AddOpenBehavior(typeof(RequestLoggingPipelineBehavior<,>));
             configuration.AddOpenBehavior(typeof(ValidationPipelineBehavior<,>));
         });

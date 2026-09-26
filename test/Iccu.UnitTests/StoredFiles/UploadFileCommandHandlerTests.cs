@@ -41,7 +41,6 @@ public class UploadFileCommandHandlerTests
         Assert.True(result.IsSuccess);
         StoredFile storedFile = Assert.Single(_storedFiles.Files);
         Assert.Equal(result.Data, storedFile.Id);
-        Assert.Equal(fileName, storedFile.OriginalName);
         Assert.Equal(contentType, storedFile.ContentType);
         Assert.Equal($"{storedFile.Id}{Path.GetExtension(fileName).ToLowerInvariant()}", storedFile.StoragePath);
         Assert.Equal(content, _fileStore.Files[storedFile.StoragePath]);

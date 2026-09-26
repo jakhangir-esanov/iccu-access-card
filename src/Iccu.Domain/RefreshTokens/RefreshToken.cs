@@ -18,8 +18,6 @@ public sealed class RefreshToken
 
     public DateTime? RevokedAt { get; private set; }
 
-    public Guid? ReplacedByTokenId { get; private set; }
-
     public static RefreshToken Issue(Guid userId, string tokenHash, DateTime utcNow, DateTime expiresAt)
     {
         return new RefreshToken
@@ -32,9 +30,8 @@ public sealed class RefreshToken
         };
     }
 
-    public void Revoke(DateTime utcNow, Guid? replacedByTokenId = null)
+    public void Revoke(DateTime utcNow)
     {
         RevokedAt = utcNow;
-        ReplacedByTokenId = replacedByTokenId;
     }
 }

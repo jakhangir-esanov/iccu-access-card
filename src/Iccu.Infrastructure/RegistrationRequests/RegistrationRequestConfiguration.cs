@@ -43,7 +43,6 @@ internal sealed class RegistrationRequestConfiguration : IEntityTypeConfiguratio
             .IsUnique()
             .HasFilter("status = 0");
         builder.HasIndex(x => new { x.Status, x.SubmittedAt });
-        builder.HasIndex(x => new { x.DocumentType, x.DocumentNumber });
         builder.HasIndex(x => x.PhotoFileId);
     }
 }

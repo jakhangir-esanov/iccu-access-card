@@ -30,8 +30,6 @@ app.UseSwaggerDocumentation();
 
 app.UseCorsPolicy();
 
-app.UseLogContext();
-
 app.UseSerilogRequestLogging();
 
 app.UseExceptionHandler();

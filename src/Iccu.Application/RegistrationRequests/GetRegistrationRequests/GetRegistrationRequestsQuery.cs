@@ -84,7 +84,7 @@ internal sealed class GetRegistrationRequestsQueryHandler(IDbConnectionFactory d
                 has_registered_document AS {nameof(RegistrationRequestListItemResponse.HasRegisteredDocument)}
             FROM requests
             {whereSql}
-            ORDER BY {paging.SortBy} {paging.SortDirection}
+            ORDER BY {paging.SortField} {paging.SortDirection}
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
             """;
 

@@ -47,7 +47,7 @@ Architecture tests enforce the dependency direction, naming, and `sealed`/`inter
 ### Business logic lives in handlers
 - Rules go inside the command/query handler as `private const` values and inline checks: card validity 2 years, card number format `D7`, login lockout 5 attempts / 15 minutes, refresh-token rotation, 24-hour request lifetime.
 - Never create helper, policy or rules classes (`CardNumber`, `CardValidity`, `LoginPolicy`, `ReaderFilter`, ...). The user explicitly rejected them.
-- Code shared by several handlers is referenced from the owning handler's `internal static` member (e.g. `GetReadersQueryHandler.FilterSql`).
+- Code shared by several handlers is referenced from the owning handler's `internal static` member (e.g. `GetReadersQueryHandler.BuildFilter`).
 
 ### CQRS with MediatR
 - MediatR 12.5 (not Cortex.Mediator). Endpoints send through `ISender`.
@@ -68,10 +68,11 @@ Architecture tests enforce the dependency direction, naming, and `sealed`/`inter
 
 ### Users and auth
 - There is one user concept: `User` with `UserRole` `Admin` or `Receptionist`; policies `Policies.User` (both) and `Policies.Admin`. Never introduce the word "staff" in types, routes, tables or docs.
-- Readers never log in. They are data records created by staff or by approving a QR registration request. Do not propose reader login or self-service profiles unless the user asks.
+- Readers never log in. They are data records created by users or by approving a QR registration request. Do not propose reader login or self-service profiles unless the user asks.
 - Own JWT (HS256, 15 minutes) plus a rotated refresh token in the `iccu_refresh` HttpOnly cookie; only its SHA-256 hash is stored.
 
 ### Other
+- YAGNI. Add only what a current requirement uses: no speculative options, interfaces, parameters, columns or "might need later" helpers. Delete code, config and columns that nothing reads.
 - No comments in C# code (`//`, `/* */`, `///`). Explain reasons in commit messages or `docs/`.
 - Time only through `IDateTimeProvider`; "today" is calculated in `Clock:TimeZone` (`Asia/Tashkent`). Store UTC.
 - `using` directives go inside the namespace, ordered by line length, as in existing files.
@@ -81,9 +82,10 @@ Architecture tests enforce the dependency direction, naming, and `sealed`/`inter
 - Tests: xUnit `Assert` only (FluentAssertions 8+ is commercial), hand-written fakes in `test/Iccu.UnitTests/Fakes`, no mocking library.
 
 ## Do not change without asking
-- There is no data initializer: the API does not apply migrations or create a first admin at startup. How that happens on the server is still undecided.
+- At startup the API applies EF migrations (`ApplyMigrationsAsync`) and creates nothing else. There is no seeding and no first-admin bootstrap; the user rejected one on 2026-09-26. How the first admin reaches the server is still undecided.
 - The nginx `geo $is_library_network` block in `deploy/nginx/conf.d/iccu.conf` still lists generic private ranges; the real library range is unknown.
 - `Newtonsoft.Json` is pinned to 13.0.3 because Hangfire otherwise pulls a vulnerable version.
+- `Microsoft.EntityFrameworkCore.Relational` is pinned to 10.0.12 in Infrastructure so it matches `Microsoft.EntityFrameworkCore.Design` in Api; without it the build warns MSB3277.
 
 ## Git
 Commit or push only when the user asks. Repository: `jakhangir-esanov/iccu-access-card`, branch `main`.

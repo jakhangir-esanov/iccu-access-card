@@ -46,7 +46,6 @@ public class RefreshSessionCommandHandlerTests
         RefreshToken previous = _refreshTokens.Tokens[0];
         RefreshToken next = _refreshTokens.Tokens[1];
         Assert.Equal(_clock.UtcNow, previous.RevokedAt);
-        Assert.Equal(next.Id, previous.ReplacedByTokenId);
         Assert.Null(next.RevokedAt);
         Assert.True(next.ExpiresAt > _clock.UtcNow);
     }

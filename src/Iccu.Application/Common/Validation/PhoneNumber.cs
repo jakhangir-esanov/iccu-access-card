@@ -2,7 +2,7 @@ namespace Iccu.Application.Common.Validation;
 
 public static class PhoneNumber
 {
-    public const string CountryCode = "998";
+    private const string CountryCode = "998";
 
     private const int NationalLength = 9;
     private const int FullLength = 12;

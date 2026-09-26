@@ -98,7 +98,7 @@ docker stack deploy --with-registry-auth -c stacks/api.yml iccu
 docker stack deploy -c stacks/nginx.yml iccu
 ```
 
-API ishga tushganda migratsiyalarni qo'llamaydi va hech qanday boshlang'ich ma'lumot (jumladan birinchi administrator) yaratmaydi. **Bu ikki qadam hali belgilanmagan.**
+API ishga tushganda migratsiyalarni o'zi qo'llaydi. Boshlang'ich ma'lumot, jumladan birinchi administrator, yaratilmaydi. **Birinchi administrator qanday qo'shilishi hali belgilanmagan.**
 
 Tekshirish:
 

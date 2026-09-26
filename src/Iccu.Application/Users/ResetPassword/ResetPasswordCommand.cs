@@ -27,7 +27,7 @@ internal sealed class ResetPasswordCommandHandler(
 
         DateTime utcNow = dateTimeProvider.UtcNow;
 
-        user.ChangePassword(passwordHasher.Hash(request.NewPassword), utcNow);
+        user.ChangePassword(passwordHasher.Hash(request.NewPassword));
         user.ClearLoginFailures();
 
         foreach (RefreshToken token in await refreshTokenRepository.GetActiveForUserAsync(user.Id, utcNow, cancellationToken))

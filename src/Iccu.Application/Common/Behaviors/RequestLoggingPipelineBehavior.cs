@@ -2,7 +2,6 @@ namespace Iccu.Application.Common.Behaviors;
 
 using MediatR;
 using Serilog.Context;
-using System.Diagnostics;
 using Iccu.Domain.Common;
 using Microsoft.Extensions.Logging;
 
@@ -19,9 +18,6 @@ internal sealed class RequestLoggingPipelineBehavior<TRequest, TResponse>(
     {
         string moduleName = GetModuleName(typeof(TRequest).FullName!);
         string requestName = typeof(TRequest).Name;
-
-        Activity.Current?.SetTag("request.module", moduleName);
-        Activity.Current?.SetTag("request.name", requestName);
 
         using (LogContext.PushProperty("Module", moduleName))
         {

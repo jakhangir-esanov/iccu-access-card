@@ -2,9 +2,7 @@ services:
   iccu-api:
     image: ${ICCU_API_IMAGE}
     environment:
-      ASPNETCORE_ENVIRONMENT: Production
       ConnectionStrings__Database: Host=postgres;Port=5432;Database=iccu;Username=iccu
-      Storage__RootPath: /var/iccu/files
     secrets:
       - source: iccu_db_password
         target: Database__Password

@@ -56,7 +56,7 @@ internal sealed class RefreshSessionCommandHandler(
         var next = RefreshToken.Issue(user.Id, tokens.RefreshTokenHash, utcNow, tokens.RefreshTokenExpiresAt);
 
         refreshTokenRepository.Insert(next);
-        presented.Revoke(utcNow, next.Id);
+        presented.Revoke(utcNow);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 

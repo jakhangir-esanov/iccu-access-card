@@ -72,7 +72,7 @@ internal sealed class GetUsersQueryHandler(
                 created_at AS {nameof(UserResponse.CreatedAt)}
             FROM users
             {whereSql}
-            ORDER BY {paging.SortBy} {paging.SortDirection}
+            ORDER BY {paging.SortField} {paging.SortDirection}
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
             """;
 

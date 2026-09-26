@@ -91,7 +91,7 @@ internal sealed class GetReadersQueryHandler(
                 created_at AS {nameof(ReaderListItemResponse.CreatedAt)}
             FROM readers
             {whereSql}
-            ORDER BY {paging.SortBy} {paging.SortDirection}
+            ORDER BY {paging.SortField} {paging.SortDirection}
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
             """;
 

@@ -1,6 +1,5 @@
 namespace Iccu.UnitTests.Fakes;
 
-using System.Data.Common;
 using Iccu.Domain.Users;
 using Iccu.Application.Abstractions.Storage;
 using Iccu.Application.Abstractions.Authentication;
@@ -27,9 +26,6 @@ internal sealed class FakeUnitOfWork : IUnitOfWork
         SaveCount++;
         return Task.FromResult(0);
     }
-
-    public Task<DbTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default) =>
-        throw new NotSupportedException();
 }
 
 internal sealed class FakeFileStore : IFileStore

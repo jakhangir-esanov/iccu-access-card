@@ -44,8 +44,6 @@ internal static class SwaggerExtensions
             });
 
             options.CustomSchemaIds(t => t.FullName?.Replace("+", "."));
-            options.OperationFilter<SwaggerOperationIdFilter>();
-            options.OperationFilter<AuthorizeCheckOperationFilter>();
             options.SchemaFilter<EnumSchemaFilter>();
             options.UseAllOfToExtendReferenceSchemas();
             options.SupportNonNullableReferenceTypes();

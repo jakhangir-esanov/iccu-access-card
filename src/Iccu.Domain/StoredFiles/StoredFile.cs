@@ -8,10 +8,6 @@ public sealed class StoredFile
 
     public Guid Id { get; private set; }
 
-    public string OriginalName { get; private set; } = null!;
-
-    public string Extension { get; private set; } = null!;
-
     public string ContentType { get; private set; } = null!;
 
     public long Size { get; private set; }
@@ -21,7 +17,6 @@ public sealed class StoredFile
     public DateTime CreatedAt { get; private set; }
 
     public static StoredFile Create(
-        string originalName,
         string extension,
         string contentType,
         long size,
@@ -32,8 +27,6 @@ public sealed class StoredFile
         return new StoredFile
         {
             Id = id,
-            OriginalName = originalName,
-            Extension = extension,
             ContentType = contentType,
             Size = size,
             StoragePath = $"{id}{extension}".ToLowerInvariant(),

@@ -39,10 +39,4 @@ public static class ReaderErrors
         en: "The birth date must be in the past and not earlier than 1900.",
         uz: "Tug'ilgan sana o'tgan kunlardan biri bo'lishi va 1900-yildan oldin bo'lmasligi kerak.",
         ru: "Дата рождения должна быть в прошлом и не ранее 1900 года.");
-
-    public static readonly Error AlreadyDeleted = Error.Conflict(
-        "Reader.AlreadyDeleted",
-        en: "The reader has already been deleted.",
-        uz: "Kitobxon allaqachon o'chirilgan.",
-        ru: "Читатель уже удалён.");
 }

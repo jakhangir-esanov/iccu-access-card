@@ -32,14 +32,12 @@ docs/
 Kerak: .NET 10 SDK va PostgreSQL. `appsettings.Development.json` bo'yicha baza `localhost:5432/iccu`, foydalanuvchi va parol `postgres`.
 
 ```bash
-dotnet tool restore
-dotnet ef database update -p src/Iccu.Infrastructure -s src/Iccu.Api
 dotnet run --project src/Iccu.Api
 ```
 
 API `http://localhost:5080` da ishga tushadi. Swagger va Hangfire dashboard faqat Development muhitida ochiladi. Holatni tekshirish: `GET /health`.
 
-API ishga tushganda migratsiyalarni qo'llamaydi va boshlang'ich ma'lumot yaratmaydi.
+API ishga tushganda bazani yaratadi va migratsiyalarni qo'llaydi. Boshlang'ich ma'lumot (foydalanuvchilar ham) yaratilmaydi.
 
 ## Testlar
 

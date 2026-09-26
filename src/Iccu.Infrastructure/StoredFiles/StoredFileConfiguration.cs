@@ -10,14 +10,6 @@ internal sealed class StoredFileConfiguration : IEntityTypeConfiguration<StoredF
     {
         builder.HasKey(f => f.Id);
 
-        builder.Property(f => f.OriginalName)
-            .HasMaxLength(300)
-            .IsRequired();
-
-        builder.Property(f => f.Extension)
-            .HasMaxLength(20)
-            .IsRequired();
-
         builder.Property(f => f.ContentType)
             .HasMaxLength(150)
             .IsRequired();

@@ -37,7 +37,7 @@ internal static class TestData
             "I-TN 1234567");
 
     public static StoredFile Photo(DateTime createdAt) =>
-        StoredFile.Create("photo.jpg", ".jpg", "image/jpeg", 2048, createdAt);
+        StoredFile.Create(".jpg", "image/jpeg", 2048, createdAt);
 
     public static RegistrationRequest SubmittedPupil(DateTime submittedAt, Guid? photoFileId = null) =>
         RegistrationRequest.Submit(

@@ -8,8 +8,8 @@ public static class ExcelWriter
 {
     public const string ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
-    public const double MinColumnWidth = 8;
-    public const double MaxColumnWidth = 80;
+    private const double MinColumnWidth = 8;
+    private const double MaxColumnWidth = 80;
 
     private const uint FirstSheetId = 1;
     private const uint A4PaperSize = 9;
@@ -66,7 +66,7 @@ public static class ExcelWriter
         return stream.ToArray();
     }
 
-    public static double ColumnWidth(string header, IEnumerable<string> values)
+    private static double ColumnWidth(string header, IEnumerable<string> values)
     {
         var headerWidth = header.Length * BoldWidthFactor;
         var widest = values.Select(value => (double)value.Length).Append(headerWidth).Max();
