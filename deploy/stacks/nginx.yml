@@ -23,10 +23,6 @@ services:
         source: /opt/iccu/nginx/acme
         target: /var/www/acme
         read_only: true
-      - type: bind
-        source: /opt/iccu/web
-        target: /usr/share/nginx/html
-        read_only: true
     networks:
       - iccu-net
     deploy:
