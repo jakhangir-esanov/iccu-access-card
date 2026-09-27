@@ -58,6 +58,8 @@ Konteyner `8080` portda ishlaydi. Rasmlar `/var/iccu/files` ga yoziladi, bu papk
 - [Loyihaning umumiy ko'rinishi](docs/project-overview.md): talablar, rollar, ma'lumotlar modeli, API rejasi
 - [Arxitektura](docs/architecture.md): qatlamlar va kod yozish qoidalari
 - [Deploy](docs/deployment.md): Docker Swarm'ga o'rnatish
+- [Frontend shartnomasi](docs/frontend-contract.md): frontend uchun API, auth oqimi, xatolar, validatsiya
+- [Frontend rejasi](docs/frontend-plan.md): frontend arxitekturasi va bosqichlari
 
 ## Litsenziya
 

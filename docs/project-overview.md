@@ -80,7 +80,7 @@ sequenceDiagram
 ```
 
 - Ariza 24 soat ichida ko'rib chiqilmasa avtomatik "muddati o'tgan" holatiga o'tadi.
-- Ochiq anketaga spamdan himoya: IP bo'yicha limit (10 daqiqada 5 ta ariza).
+- Ochiq anketaga spamdan himoya: IP bo'yicha limit (10 daqiqada 60 ta ariza va 120 ta rasm; kutubxona Wi-Fi'sida hamma bitta IP bilan chiqishi mumkin, shuning uchun limit baland).
 - Ariza kodi 4 xonali, 9999 dan keyin qaytadan aylanadi. Faqat kutilayotgan arizalar orasida unique.
 
 ### 2.5 Admin panel funksiyalari
@@ -256,7 +256,7 @@ Ro'yxatlarda pasport raqami maskalangan holda chiqadi (`AA***4567`). To'liq raqa
 - Parollar PBKDF2 bilan hash qilinadi (ASP.NET `PasswordHasher`). Login'da foydalanuvchi mavjud bo'lmasa ham hash tekshiriladi, shunda javob vaqtidan login borligini bilib bo'lmaydi.
 - Refresh token faqat HttpOnly + Secure + SameSite=Strict cookie'da turadi. Bazada uning faqat SHA-256 hash'i saqlanadi. Har yangilanishda rotatsiya qilinadi.
 - JWT imzolash kaliti va baza paroli serverdagi `/opt/iccu/env/iccu.env` faylidan environment variable orqali beriladi (`tofan` kabi), repoga yozilmaydi.
-- Rate limiting: login uchun daqiqasiga 10 ta, ochiq anketa uchun 10 daqiqada 5 ta (IP bo'yicha, nginx ortida `X-Forwarded-For` hisobga olinadi).
+- Rate limiting: login uchun daqiqasiga 10 ta, ochiq anketa uchun 10 daqiqada 60 ta ariza va 120 ta rasm (IP bo'yicha, nginx ortida `X-Forwarded-For` hisobga olinadi).
 - Yuklangan fayl kengaytma, hajm (8 MB) va magic-byte imzosi bo'yicha tekshiriladi. Fayl mazmuni faqat avtorizatsiya bilan ochiladi. Ishlatilmayotgan fayllar 24 soatdan keyin avtomatik o'chiriladi.
 - `/admin` faqat kutubxona tarmog'idan ochiladi.
 - Shaxsiy ma'lumot O'zbekiston hududidagi serverda saqlanadi. Anketada rozilik belgisi majburiy.
@@ -302,7 +302,7 @@ Internet / kutubxona tarmog'i
 | Dockerfile | Tayyor |
 | `deploy/`: Swarm stack'lari, nginx, backup skripti | Tayyor |
 | `CLAUDE.md` | Tayyor |
-| Frontend: React admin panel va ochiq anketa (Figma shablon asosida) | Backend'dan keyin |
+| Frontend: React admin panel va ochiq anketa (Figma shablon asosida) | Reja va API shartnomasi tayyor: [frontend-plan.md](frontend-plan.md), [frontend-contract.md](frontend-contract.md). Alohida repo'da quriladi |
 | Karta dizayni va printer kalibrovkasi | Printer modeli aniqlangach |
 
 `tofan` backend repozitoriyasida `.claude/` skill'lari yo'q, ular faqat `tofan-ui`da (Angular uchun). ICCU backend'i uchun `CLAUDE.md`, `architecture-reviewer` va `test-writer` agentlari hamda `new-feature` skill'i .NET'ga moslab yoziladi. Frontend uchun skill'lar React bosqichida qo'shiladi.
