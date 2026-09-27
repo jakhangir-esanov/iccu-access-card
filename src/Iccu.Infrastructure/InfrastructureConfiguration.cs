@@ -143,8 +143,8 @@ public static class InfrastructureConfiguration
             options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
             options.AddPolicy(RateLimitPolicies.Login, context => FixedWindow(context, 10, TimeSpan.FromMinutes(1)));
-            options.AddPolicy(RateLimitPolicies.PublicRegistration, context => FixedWindow(context, 5, TimeSpan.FromMinutes(10)));
-            options.AddPolicy(RateLimitPolicies.PublicUpload, context => FixedWindow(context, 5, TimeSpan.FromMinutes(10)));
+            options.AddPolicy(RateLimitPolicies.PublicRegistration, context => FixedWindow(context, 60, TimeSpan.FromMinutes(10)));
+            options.AddPolicy(RateLimitPolicies.PublicUpload, context => FixedWindow(context, 120, TimeSpan.FromMinutes(10)));
         });
 
         services.Configure<ForwardedHeadersOptions>(options =>
