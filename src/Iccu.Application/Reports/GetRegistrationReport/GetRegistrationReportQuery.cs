@@ -40,6 +40,18 @@ internal sealed class GetRegistrationReportQueryHandler(
             GROUP BY r.category
             ORDER BY r.category;
 
+            SELECT r.gender AS {nameof(GenderRow.Gender)}, COUNT(*)::int AS {nameof(GenderRow.Count)}
+            FROM iccu.readers r
+            WHERE r.deleted_at IS NULL AND r.created_at >= @FromUtc AND r.created_at < @ToUtc
+            GROUP BY r.gender
+            ORDER BY r.gender NULLS LAST;
+
+            SELECT r.citizenship AS {nameof(CitizenshipRow.Citizenship)}, COUNT(*)::int AS {nameof(CitizenshipRow.Count)}
+            FROM iccu.readers r
+            WHERE r.deleted_at IS NULL AND r.created_at >= @FromUtc AND r.created_at < @ToUtc
+            GROUP BY r.citizenship
+            ORDER BY r.citizenship NULLS LAST;
+
             SELECT
                 u.id AS {nameof(UserRow.UserId)},
                 u.full_name AS {nameof(UserRow.FullName)},
@@ -66,6 +78,8 @@ internal sealed class GetRegistrationReportQueryHandler(
 
         List<PeriodRow> byPeriod = [.. await grid.ReadAsync<PeriodRow>()];
         List<CategoryRow> byCategory = [.. await grid.ReadAsync<CategoryRow>()];
+        List<GenderRow> byGender = [.. await grid.ReadAsync<GenderRow>()];
+        List<CitizenshipRow> byCitizenship = [.. await grid.ReadAsync<CitizenshipRow>()];
         List<UserRow> byUser = [.. await grid.ReadAsync<UserRow>()];
 
         return new RegistrationReportResponse(
@@ -75,6 +89,8 @@ internal sealed class GetRegistrationReportQueryHandler(
             byPeriod.Sum(row => row.Total),
             byPeriod,
             byCategory,
+            byGender,
+            byCitizenship,
             byUser);
     }
 }

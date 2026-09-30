@@ -60,7 +60,8 @@ public class ReviewRegistrationRequestCommandHandlerTests
 
         Assert.True(result.IsSuccess);
         Assert.Equal(ReaderCategory.Student, request.Category);
-        Assert.Equal("AA1234567", request.DocumentNumber);
+        Assert.Equal(Gender.Male, request.Gender);
+        Assert.Equal(Citizenship.Uzbekistan, request.Citizenship);
         Assert.Equal("+998901234567", request.Phone);
     }
 

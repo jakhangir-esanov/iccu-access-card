@@ -1,7 +1,6 @@
 namespace Iccu.Infrastructure.Readers;
 
 using Iccu.Domain.Readers;
-using Iccu.Domain.Common.Enums;
 using Iccu.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,16 +11,13 @@ internal sealed class ReaderRepository(ApplicationDbContext dbContext) : IReader
         return await dbContext.Readers.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 
-    public async Task<bool> IsDocumentRegisteredAsync(
-        DocumentType documentType,
-        string documentNumber,
+    public async Task<bool> IsPhoneRegisteredAsync(
+        string phone,
         Guid? exceptReaderId = null,
         CancellationToken cancellationToken = default)
     {
         return await dbContext.Readers.AnyAsync(
-            x => x.DocumentType == documentType &&
-                 x.DocumentNumber == documentNumber &&
-                 x.Id != exceptReaderId,
+            x => x.Phone == phone && x.Id != exceptReaderId,
             cancellationToken);
     }
 

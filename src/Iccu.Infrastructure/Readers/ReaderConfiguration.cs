@@ -32,19 +32,12 @@ internal sealed class ReaderConfiguration : IEntityTypeConfiguration<Reader>
             .HasMaxLength(16)
             .IsRequired();
 
-        builder.Property(x => x.DocumentNumber)
-            .HasMaxLength(20)
-            .IsRequired();
-
         builder.Property<string>(SearchText)
             .HasComputedColumnSql(
                 "translate(lower(last_name || ' ' || first_name || ' ' || coalesce(middle_name, '')), '‘’ʻʼ`´', '''''''''''''')",
                 stored: true);
 
         builder.HasIndex(x => x.CardNumber).IsUnique();
-        builder.HasIndex(x => new { x.DocumentType, x.DocumentNumber })
-            .IsUnique()
-            .HasFilter("deleted_at IS NULL");
         builder.HasIndex(SearchText).HasMethod("gin").HasOperators("gin_trgm_ops");
         builder.HasIndex(x => x.Phone).HasMethod("gin").HasOperators("gin_trgm_ops");
         builder.HasIndex(x => x.PhotoFileId);

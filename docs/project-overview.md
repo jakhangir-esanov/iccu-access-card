@@ -38,8 +38,9 @@ Xulosa: eski kodni tuzatib bo'lmaydi, tizim noldan yoziladi.
 | Familiya, ism | Majburiy |
 | Otasining ismi | Ixtiyoriy |
 | Tug'ilgan sana | O'tgan sana, 1900-yildan keyin |
-| Telefon | O'zbekiston raqami, `+998XXXXXXXXX` ko'rinishida saqlanadi |
-| Hujjat | Pasport yoki ID karta (`AA1234567`). Pasporti yo'q o'quvchilar uchun tug'ilganlik haqidagi guvohnoma |
+| Jinsi | Erkak yoki Ayol, majburiy |
+| Fuqaroligi | O'zbekiston fuqarosi yoki Chet el fuqarosi, majburiy |
+| Telefon | O'zbekiston fuqarosi uchun O'zbekiston raqami (`+998XXXXXXXXX`). Chet el fuqarosi uchun xalqaro raqam ham mumkin (8–15 raqam, `+79012345678` ko'rinishida saqlanadi) |
 | Rasm | Fayldan yoki kamera orqali. Frontend 3:4 nisbatda kesadi, server faylni o'zgartirmasdan saqlaydi |
 
 ### 2.2 Karta raqami
@@ -48,7 +49,8 @@ Xulosa: eski kodni tuzatib bo'lmaydi, tizim noldan yoziladi.
 - **Hech qachon reset bo'lmaydi va yilga bog'lanmaydi.** Yiliga 100 ming kitobxon kelsa ham 100 yilga yetadi.
 - Raqam faqat kitobxon tasdiqlanganda beriladi. Rad etilgan arizalar raqamni band qilmaydi.
 - O'chirish yumshoq (soft delete), shuning uchun raqam boshqa odamga qayta berilmaydi.
-- Bitta hujjat bilan ikki marta ro'yxatdan o'tib bo'lmaydi (bazada unique index). Qayta kelgan kitobxonga yangi raqam ochilmaydi, eski kartasi qayta chop etiladi.
+- Bitta telefon raqami bilan ikki marta ro'yxatdan o'tib bo'lmaydi (handler tekshiradi, `409 Reader.PhoneAlreadyRegistered`). Qayta kelgan kitobxonga yangi raqam ochilmaydi, eski kartasi qayta chop etiladi.
+- Hujjat turi va hujjat raqami 2026-09-30 da ma'muriyat topshirig'i bilan butunlay olib tashlandi (yuridik sabab: kutubxona shaxsni tasdiqlovchi hujjat ma'lumotini saqlamasligi kerak). Ularning o'rniga jins va fuqarolik qo'shildi. Eski yozuvlarda jins va fuqarolik bo'sh (`NULL`), ular tahrirlanganda to'ldiriladi.
 
 ### 2.3 Karta
 
@@ -85,7 +87,7 @@ sequenceDiagram
 
 ### 2.5 Admin panel funksiyalari
 
-- **Kitobxonlar ro'yxati**: pagination, qidiruv (F.I.Sh., karta raqami, telefon, hujjat), filtrlar (toifa, holat, manba, sana oralig'i), tahrirlash, o'chirish, kartani uzaytirish va chop etish.
+- **Kitobxonlar ro'yxati**: pagination, qidiruv (F.I.Sh., karta raqami, telefon), filtrlar (toifa, jins, fuqarolik, holat, manba, sana oralig'i), tahrirlash, o'chirish, kartani uzaytirish va chop etish.
 - **Excelga eksport**: filtr qo'llangan to'liq ro'yxat, server tomonda tayyorlanadi.
 - **Arizalar navbati**: real vaqtda yangilanadi, tasdiqlash yoki rad etish.
 - **Dashboard**:
@@ -93,8 +95,8 @@ sequenceDiagram
   - bugun va shu oy ro'yxatdan o'tganlar;
   - kutilayotgan arizalar;
   - 30 kun ichida muddati tugaydiganlar;
-  - toifalar bo'yicha taqsimot, oxirgi 30 kun grafigi.
-- **Hisobotlar**: davr bo'yicha (kun yoki oy), toifa, manba (resepshn yoki QR) va foydalanuvchi kesimida.
+  - toifalar, jins va fuqarolik bo'yicha taqsimot, oxirgi 30 kun grafigi.
+- **Hisobotlar**: davr bo'yicha (kun yoki oy), toifa, jins, fuqarolik, manba (resepshn yoki QR) va foydalanuvchi kesimida.
 - **Foydalanuvchilar boshqaruvi** (faqat admin): yaratish, rol berish, faolsizlantirish, parolni tiklash.
 
 ### 2.6 Rollar
@@ -105,7 +107,7 @@ sequenceDiagram
 | Arizani tasdiqlash yoki rad etish | Ha | Ha |
 | Dashboard va hisobotlar | Ha | Ha |
 | Kitobxonni o'chirish | Yo'q | Ha |
-| Excelga eksport (to'liq pasport ma'lumoti bilan) | Yo'q | Ha |
+| Excelga eksport (to'liq shaxsiy ma'lumot bilan) | Yo'q | Ha |
 | Foydalanuvchilarni boshqarish | Yo'q | Ha |
 
 ---
@@ -220,7 +222,7 @@ Barcha jadvallar `iccu` sxemasida.
 
 | Jadval | Asosiy ustunlar | Indekslar |
 |---|---|---|
-| `readers` | `id` (Guid v7), `card_number` (sequence), toifa, F.I.Sh., `birth_date`, `phone`, `document_type`, `document_number`, `photo_file_id`, `source`, `issued_on`, `expires_on`, `print_count`, `created_at`, `created_by`, `updated_at`, `deleted_at` | `card_number` unique; `(document_type, document_number)` unique (o'chirilmaganlar orasida); `search_text` va `phone` bo'yicha trigram GIN; `expires_on`, `created_at` |
+| `readers` | `id` (Guid v7), `card_number` (sequence), toifa, F.I.Sh., `birth_date`, `gender` (null bo'lishi mumkin), `citizenship` (null bo'lishi mumkin), `phone`, `photo_file_id`, `source`, `issued_on`, `expires_on`, `print_count`, `created_at`, `created_by`, `updated_at`, `deleted_at` | `card_number` unique; `search_text` va `phone` bo'yicha trigram GIN (telefon takrori ham shu bilan tekshiriladi); `expires_on`, `created_at` |
 | `registration_requests` | `id`, `code` (4 xonali, aylanuvchi sequence), `status`, shaxs maydonlari, `photo_file_id`, `submitted_at`, `expires_at`, `reviewed_*`, `rejection_reason`, `reader_id` | `code` unique (faqat Pending orasida); `status`, `submitted_at` |
 | `users` | `id`, `username` (unique), `full_name`, `password_hash`, `role`, `is_active`, lockout maydonlari | `username` unique |
 | `refresh_tokens` | `id`, `user_id`, `token_hash` (SHA-256), `expires_at`, `revoked_at` | `token_hash` unique |
@@ -246,8 +248,6 @@ Tashqaridan barcha yo'llar `/api` ostida, nginx `/api`ni olib tashlab API'ga uza
 | Dashboard va hisobot | `GET dashboard`, `GET reports/registrations?from&to&groupBy` | Foydalanuvchi (Receptionist yoki Admin) |
 | Real-time | `hubs/registrations` (SignalR) | Foydalanuvchi (Receptionist yoki Admin) |
 | Holat | `/health` | Ochiq |
-
-Ro'yxatlarda pasport raqami maskalangan holda chiqadi (`AA***4567`). To'liq raqam faqat kitobxon yoki ariza kartochkasida ko'rinadi.
 
 ---
 

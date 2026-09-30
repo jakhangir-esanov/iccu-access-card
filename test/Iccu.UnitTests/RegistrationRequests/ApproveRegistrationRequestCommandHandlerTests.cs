@@ -43,14 +43,14 @@ public class ApproveRegistrationRequestCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WhenTheDocumentAlreadyBelongsToAReader_ReturnsConflict()
+    public async Task Handle_WhenThePhoneAlreadyBelongsToAReader_ReturnsConflict()
     {
         RegistrationRequest request = SubmitPupil();
-        _readers.Insert(TestData.RegisteredReader(TestData.Pupil(), _clock.UtcNow));
+        _readers.Insert(TestData.RegisteredReader(TestData.Student(phone: "93 555 66 77"), _clock.UtcNow));
 
         var result = await Handler().Handle(new ApproveRegistrationRequestCommand(request.Id), CancellationToken.None);
 
-        Assert.Equal(ReaderErrors.DocumentAlreadyRegistered, result.Error);
+        Assert.Equal(ReaderErrors.PhoneAlreadyRegistered, result.Error);
         Assert.Equal(RegistrationRequestStatus.Pending, request.Status);
         Assert.Equal(0, _unitOfWork.SaveCount);
     }

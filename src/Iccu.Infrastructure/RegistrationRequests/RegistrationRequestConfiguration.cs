@@ -32,10 +32,6 @@ internal sealed class RegistrationRequestConfiguration : IEntityTypeConfiguratio
             .HasMaxLength(16)
             .IsRequired();
 
-        builder.Property(x => x.DocumentNumber)
-            .HasMaxLength(20)
-            .IsRequired();
-
         builder.Property(x => x.RejectionReason)
             .HasMaxLength(500);
 

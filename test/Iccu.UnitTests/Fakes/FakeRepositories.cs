@@ -14,15 +14,13 @@ internal sealed class FakeReaderRepository : IReaderRepository
     public Task<Reader?> GetAsync(Guid id, CancellationToken cancellationToken = default) =>
         Task.FromResult(Readers.SingleOrDefault(reader => reader.Id == id && reader.DeletedAt is null));
 
-    public Task<bool> IsDocumentRegisteredAsync(
-        DocumentType documentType,
-        string documentNumber,
+    public Task<bool> IsPhoneRegisteredAsync(
+        string phone,
         Guid? exceptReaderId = null,
         CancellationToken cancellationToken = default) =>
         Task.FromResult(Readers.Any(reader =>
             reader.DeletedAt is null &&
-            reader.DocumentType == documentType &&
-            reader.DocumentNumber == documentNumber &&
+            reader.Phone == phone &&
             reader.Id != exceptReaderId));
 
     public void Insert(Reader reader) => Readers.Add(reader);

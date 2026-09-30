@@ -25,11 +25,11 @@ public sealed class RegistrationRequest
 
     public DateOnly BirthDate { get; private set; }
 
+    public Gender? Gender { get; private set; }
+
+    public Citizenship? Citizenship { get; private set; }
+
     public string Phone { get; private set; } = null!;
-
-    public DocumentType DocumentType { get; private set; }
-
-    public string DocumentNumber { get; private set; } = null!;
 
     public Guid PhotoFileId { get; private set; }
 
@@ -51,9 +51,9 @@ public sealed class RegistrationRequest
         FirstName,
         MiddleName,
         BirthDate,
-        Phone,
-        DocumentType,
-        DocumentNumber);
+        Gender,
+        Citizenship,
+        Phone);
 
     public static RegistrationRequest Submit(
         PersonDetails details,
@@ -82,9 +82,9 @@ public sealed class RegistrationRequest
         FirstName = details.FirstName;
         MiddleName = details.MiddleName;
         BirthDate = details.BirthDate;
+        Gender = details.Gender;
+        Citizenship = details.Citizenship;
         Phone = details.Phone;
-        DocumentType = details.DocumentType;
-        DocumentNumber = details.DocumentNumber;
     }
 
     public void MarkApproved(Guid readerId, DateTime utcNow, Guid userId)

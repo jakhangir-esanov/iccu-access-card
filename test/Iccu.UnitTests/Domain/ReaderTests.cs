@@ -16,9 +16,9 @@ public class ReaderTests
         "Ali",
         null,
         new DateOnly(2003, 5, 14),
-        "+998901234567",
-        DocumentType.Passport,
-        "AA1234567");
+        Gender.Male,
+        Citizenship.Uzbekistan,
+        "+998901234567");
 
     private static Reader Register() => Reader.Register(
         Details,
@@ -40,9 +40,9 @@ public class ReaderTests
             reader.FirstName,
             reader.MiddleName,
             reader.BirthDate,
-            reader.Phone,
-            reader.DocumentType,
-            reader.DocumentNumber));
+            reader.Gender,
+            reader.Citizenship,
+            reader.Phone));
         Assert.Equal(Today, reader.IssuedOn);
         Assert.Equal(Today.AddYears(2), reader.ExpiresOn);
         Assert.Equal(TestData.UserId, reader.CreatedBy);

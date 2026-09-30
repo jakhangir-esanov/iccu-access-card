@@ -17,9 +17,9 @@ internal static class ReaderExportSheet
         "Otasining ismi",
         "Toifa",
         "Tug'ilgan sana",
+        "Jinsi",
+        "Fuqaroligi",
         "Telefon",
-        "Hujjat turi",
-        "Hujjat raqami",
         "Berilgan sana",
         "Amal qilish muddati",
         "Holati",
@@ -38,9 +38,9 @@ internal static class ReaderExportSheet
             row.MiddleName ?? string.Empty,
             CategoryName(row.Category),
             FormatDate(row.BirthDate),
+            GenderName(row.Gender),
+            CitizenshipName(row.Citizenship),
             row.Phone,
-            row.DocumentType == DocumentType.Passport ? "Pasport / ID karta" : "Tug'ilganlik guvohnomasi",
-            row.DocumentNumber,
             FormatDate(row.IssuedOn),
             FormatDate(row.ExpiresOn),
             row.ExpiresOn < today ? "Muddati o'tgan" : "Faol",
@@ -60,6 +60,20 @@ internal static class ReaderExportSheet
         ReaderCategory.Professor => "Professor",
         ReaderCategory.Employee => "Xizmatchi",
         _ => category.ToString()
+    };
+
+    private static string GenderName(Gender? gender) => gender switch
+    {
+        Gender.Male => "Erkak",
+        Gender.Female => "Ayol",
+        _ => string.Empty
+    };
+
+    private static string CitizenshipName(Citizenship? citizenship) => citizenship switch
+    {
+        Citizenship.Uzbekistan => "O'zbekiston fuqarosi",
+        Citizenship.Foreign => "Chet el fuqarosi",
+        _ => string.Empty
     };
 
     private static string FormatDate(DateOnly date) => date.ToString(DateFormat, CultureInfo.InvariantCulture);

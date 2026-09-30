@@ -9,6 +9,8 @@ public sealed record RegistrationReportResponse(
     int Total,
     IReadOnlyList<PeriodRow> ByPeriod,
     IReadOnlyList<CategoryRow> ByCategory,
+    IReadOnlyList<GenderRow> ByGender,
+    IReadOnlyList<CitizenshipRow> ByCitizenship,
     IReadOnlyList<UserRow> ByUser);
 
 public sealed record PeriodRow(
@@ -19,6 +21,14 @@ public sealed record PeriodRow(
 
 public sealed record CategoryRow(
     ReaderCategory Category,
+    int Count);
+
+public sealed record GenderRow(
+    Gender? Gender,
+    int Count);
+
+public sealed record CitizenshipRow(
+    Citizenship? Citizenship,
     int Count);
 
 public sealed record UserRow(

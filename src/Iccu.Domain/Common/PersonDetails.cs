@@ -8,6 +8,6 @@ public sealed record PersonDetails(
     string FirstName,
     string? MiddleName,
     DateOnly BirthDate,
-    string Phone,
-    DocumentType DocumentType,
-    string DocumentNumber);
+    Gender? Gender,
+    Citizenship? Citizenship,
+    string Phone);

@@ -13,6 +13,8 @@ public sealed record GetReadersQuery(
     ReaderCategory? Category = null,
     RegistrationSource? Source = null,
     CardStatus? Status = null,
+    Gender? Gender = null,
+    Citizenship? Citizenship = null,
     DateOnly? RegisteredFrom = null,
     DateOnly? RegisteredTo = null) : IPagedListQuery<ReaderListItemResponse>;
 
@@ -33,11 +35,9 @@ internal sealed class GetReadersQueryHandler(
                 r.first_name,
                 r.middle_name,
                 r.birth_date,
+                r.gender,
+                r.citizenship,
                 r.phone,
-                r.document_type,
-                r.document_number,
-                left(r.document_number, 2) || repeat('*', greatest(length(r.document_number) - 6, 0)) || right(r.document_number, 4)
-                    AS document_number_masked,
                 r.source,
                 r.issued_on,
                 r.expires_on,
@@ -64,6 +64,8 @@ internal sealed class GetReadersQueryHandler(
             request.Category,
             request.Source,
             request.Status,
+            request.Gender,
+            request.Citizenship,
             request.RegisteredFrom,
             request.RegisteredTo,
             dateTimeProvider);
@@ -80,9 +82,9 @@ internal sealed class GetReadersQueryHandler(
                 first_name AS {nameof(ReaderListItemResponse.FirstName)},
                 middle_name AS {nameof(ReaderListItemResponse.MiddleName)},
                 birth_date AS {nameof(ReaderListItemResponse.BirthDate)},
+                gender AS {nameof(ReaderListItemResponse.Gender)},
+                citizenship AS {nameof(ReaderListItemResponse.Citizenship)},
                 phone AS {nameof(ReaderListItemResponse.Phone)},
-                document_type AS {nameof(ReaderListItemResponse.DocumentType)},
-                document_number_masked AS {nameof(ReaderListItemResponse.DocumentNumberMasked)},
                 source AS {nameof(ReaderListItemResponse.Source)},
                 issued_on AS {nameof(ReaderListItemResponse.IssuedOn)},
                 expires_on AS {nameof(ReaderListItemResponse.ExpiresOn)},
@@ -120,6 +122,8 @@ internal sealed class GetReadersQueryHandler(
         ReaderCategory? category,
         RegistrationSource? source,
         CardStatus? status,
+        Gender? gender,
+        Citizenship? citizenship,
         DateOnly? registeredFrom,
         DateOnly? registeredTo,
         IDateTimeProvider dateTimeProvider)
@@ -142,8 +146,7 @@ internal sealed class GetReadersQueryHandler(
                     WHERE word <> '')
                  OR readers.card_sequence::text = ltrim(@Search::text, '0')
                  OR (length(regexp_replace(@Search::text, '\D', '', 'g')) >= 4
-                     AND readers.phone LIKE '%' || regexp_replace(@Search::text, '\D', '', 'g') || '%')
-                 OR readers.document_number = upper(regexp_replace(@Search::text, '[\s\-№#.]', '', 'g')))
+                     AND readers.phone LIKE '%' || regexp_replace(@Search::text, '\D', '', 'g') || '%'))
                 """);
             param.Add("Search", search.Trim());
         }
@@ -174,6 +177,18 @@ internal sealed class GetReadersQueryHandler(
         if (status is CardStatus.Expired)
         {
             conditions.Add("readers.expires_on < @Today");
+        }
+
+        if (gender is not null)
+        {
+            conditions.Add("readers.gender = @Gender");
+            param.Add("Gender", (int)gender);
+        }
+
+        if (citizenship is not null)
+        {
+            conditions.Add("readers.citizenship = @Citizenship");
+            param.Add("Citizenship", (int)citizenship);
         }
 
         if (registeredFrom is not null)

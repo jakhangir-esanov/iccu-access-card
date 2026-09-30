@@ -55,9 +55,39 @@ public class CreateReaderCommandValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenThePassportIsMalformed_ReportsInvalidPassport()
+    public void Validate_WhenAForeignCitizenHasAnInternationalPhone_Passes()
     {
-        Assert.Contains(ReaderErrors.InvalidPassport.Code, ErrorCodes(TestData.Student(documentNumber: "A123")));
+        Assert.True(IsValid(TestData.Student(phone: "+7 901 234 56 78", citizenship: Citizenship.Foreign)));
+    }
+
+    [Fact]
+    public void Validate_WhenAForeignCitizenPhoneIsTooShort_ReportsInvalidInternationalPhone()
+    {
+        string[] codes = ErrorCodes(TestData.Student(phone: "12345", citizenship: Citizenship.Foreign));
+
+        Assert.Equal([ReaderErrors.InvalidInternationalPhone.Code], codes);
+    }
+
+    [Fact]
+    public void Validate_WhenTheGenderIsMissing_ReportsASingleError()
+    {
+        string[] codes = ErrorCodes(TestData.Student() with { Gender = null });
+
+        Assert.Equal(["NotNullValidator"], codes);
+    }
+
+    [Fact]
+    public void Validate_WhenTheCitizenshipIsMissing_ReportsItAndChecksAnUzbekPhone()
+    {
+        string[] codes = ErrorCodes(TestData.Student(phone: "+7 901 234 56 78", citizenship: null));
+
+        Assert.Equal(["NotNullValidator", ReaderErrors.InvalidPhone.Code], codes);
+    }
+
+    [Fact]
+    public void Validate_WhenTheGenderIsUnknown_Fails()
+    {
+        Assert.False(IsValid(TestData.Student() with { Gender = (Gender)9 }));
     }
 
     [Fact]

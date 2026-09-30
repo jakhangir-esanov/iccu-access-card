@@ -34,9 +34,8 @@ internal sealed class GetRegistrationRequestsQueryHandler(IDbConnectionFactory d
                 EXISTS (
                     SELECT 1
                     FROM iccu.readers existing
-                    WHERE existing.document_type = q.document_type
-                      AND existing.document_number = q.document_number
-                      AND existing.deleted_at IS NULL) AS has_registered_document
+                    WHERE existing.phone = q.phone
+                      AND existing.deleted_at IS NULL) AS has_registered_phone
             FROM iccu.registration_requests q
             LEFT JOIN iccu.users reviewer ON reviewer.id = q.reviewed_by
         )
@@ -81,7 +80,7 @@ internal sealed class GetRegistrationRequestsQueryHandler(IDbConnectionFactory d
                 expires_at AS {nameof(RegistrationRequestListItemResponse.ExpiresAt)},
                 reviewed_at AS {nameof(RegistrationRequestListItemResponse.ReviewedAt)},
                 reviewed_by_name AS {nameof(RegistrationRequestListItemResponse.ReviewedByName)},
-                has_registered_document AS {nameof(RegistrationRequestListItemResponse.HasRegisteredDocument)}
+                has_registered_phone AS {nameof(RegistrationRequestListItemResponse.HasRegisteredPhone)}
             FROM requests
             {whereSql}
             ORDER BY {paging.SortField} {paging.SortDirection}
