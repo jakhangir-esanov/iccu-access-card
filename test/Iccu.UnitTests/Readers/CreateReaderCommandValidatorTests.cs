@@ -98,6 +98,14 @@ public class CreateReaderCommandValidatorTests
         Assert.Contains(ReaderErrors.InvalidBirthDate.Code, ErrorCodes(details));
     }
 
+    [Theory]
+    [InlineData(ReaderCategory.Employee)]
+    [InlineData(ReaderCategory.User)]
+    public void Validate_ForEmployeeAndUserCategories_Passes(ReaderCategory category)
+    {
+        Assert.True(IsValid(TestData.Student() with { Category = category }));
+    }
+
     [Fact]
     public void Validate_WhenTheCategoryIsUnknown_Fails()
     {

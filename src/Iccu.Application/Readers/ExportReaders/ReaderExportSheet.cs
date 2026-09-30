@@ -58,7 +58,8 @@ internal static class ReaderExportSheet
         ReaderCategory.PhD => "PhD",
         ReaderCategory.DSc => "DSc",
         ReaderCategory.Professor => "Professor",
-        ReaderCategory.Employee => "Xizmatchi",
+        ReaderCategory.Employee => "Xodim",
+        ReaderCategory.User => "Foydalanuvchi",
         _ => category.ToString()
     };
 
