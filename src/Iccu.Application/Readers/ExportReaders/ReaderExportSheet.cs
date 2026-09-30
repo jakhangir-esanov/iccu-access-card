@@ -44,7 +44,7 @@ internal static class ReaderExportSheet
             FormatDate(row.IssuedOn),
             FormatDate(row.ExpiresOn),
             row.ExpiresOn < today ? "Muddati o'tgan" : "Faol",
-            row.Source == RegistrationSource.Reception ? "Qabulxona" : "QR anketa",
+            row.Source == RegistrationSource.Reception ? "Qabulxona" : "Onlayn",
             row.PrintCount.ToString(CultureInfo.InvariantCulture),
             row.CreatedByName ?? string.Empty
         ];
