@@ -224,6 +224,18 @@ docker stats --no-stream
 
 ICCU'ni butunlay olib tashlash tofan'ga tegmaydi: `docker stack rm iccu`, keyin `50-iccu.conf`ni o'chirib nginx'ni reload qilish.
 
+### Demo ma'lumotlarini tozalash
+
+`deploy/tofan/clear-data.sh` kitobxonlar, arizalar va rasmlarni o'chiradi, karta raqamini `0000001`dan va ariza kodini `0001`dan qayta boshlaydi. Foydalanuvchilar qoladi. Skript avval sonlarni ko'rsatadi, `TOZALA` deb yozilmaguncha hech narsaga tegmaydi, keyin `backup.sh` bilan zaxira oladi va tozalash paytida API'ni to'xtatib turadi. `backup.sh` ishga tushiriladigan bo'lishi kerak (8-bo'lim, `chmod +x`).
+
+```bash
+scp deploy/tofan/clear-data.sh deploy@157.90.117.20:/opt/iccu/backups/
+chmod +x /opt/iccu/backups/clear-data.sh
+/opt/iccu/backups/clear-data.sh
+```
+
+Rasm fayllari konteyner foydalanuvchisiga (UID 1654) tegishli, shuning uchun ularni o'chirishda `sudo` paroli so'ralishi mumkin. Qaytarish: bazani eng oxirgi `iccu-*.dump`dan tiklash (8-bo'lim) va `sudo rsync -a /opt/iccu/backups/files/ /opt/iccu/files/`.
+
 ## 10. Cheklovlar
 
 - **API replikasi 1 ta.** SignalR xabarlari bitta jarayon ichida yuboriladi. Replika ko'paytirilsa Redis backplane kerak bo'ladi.
