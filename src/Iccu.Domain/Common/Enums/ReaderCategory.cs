@@ -8,5 +8,6 @@ public enum ReaderCategory
     PhD = 3,
     DSc = 4,
     Professor = 5,
-    Employee = 6
+    Employee = 6,
+    User = 7
 }

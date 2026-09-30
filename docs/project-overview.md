@@ -34,7 +34,7 @@ Xulosa: eski kodni tuzatib bo'lmaydi, tizim noldan yoziladi.
 
 | Maydon | Qoida |
 |---|---|
-| Toifa | O'quvchi, Talaba, Magistr, PhD, DSc, Professor, Xizmatchi |
+| Toifa | O'quvchi, Talaba, Magistr, PhD, DSc, Professor, Xodim, Foydalanuvchi |
 | Familiya, ism | Majburiy |
 | Otasining ismi | Ixtiyoriy |
 | Tug'ilgan sana | O'tgan sana, 1900-yildan keyin |

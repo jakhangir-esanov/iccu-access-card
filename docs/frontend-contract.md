@@ -138,7 +138,7 @@ HTTP klient body bo'sh yoki JSON bo'lmagan javobni ham xatoga aylantira olishi k
 | Enum | Qiymatlar |
 |---|---|
 | `UserRole` | 0 Receptionist, 1 Admin |
-| `ReaderCategory` | 0 Pupil (O'quvchi), 1 Student (Talaba), 2 Master (Magistr), 3 PhD, 4 DSc, 5 Professor, 6 Employee (Xizmatchi) |
+| `ReaderCategory` | 0 Pupil (O'quvchi), 1 Student (Talaba), 2 Master (Magistr), 3 PhD, 4 DSc, 5 Professor, 6 Employee (Xodim), 7 User (Foydalanuvchi) |
 | `Gender` | 0 Male (Erkak), 1 Female (Ayol) |
 | `Citizenship` | 0 Uzbekistan (O'zbekiston fuqarosi), 1 Foreign (Chet el fuqarosi) |
 | `RegistrationSource` | 0 Reception (Resepshn), 1 SelfService (QR anketa) |
