@@ -28,8 +28,8 @@ public class CreateReaderCommandHandlerTests
         new FakeCurrentUser(TestData.UserId),
         _clock);
 
-    private CreateReaderCommand Command(string documentNumber = "AA1234567") =>
-        new(TestData.Student(documentNumber), _photo.Id);
+    private CreateReaderCommand Command(string phone = "+998901234567") =>
+        new(TestData.Student(phone), _photo.Id);
 
     [Fact]
     public async Task Handle_Should_RegisterAReceptionReaderWithTheUploadedPhoto()
@@ -49,14 +49,25 @@ public class CreateReaderCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WhenTheDocumentIsAlreadyRegistered_ReturnsConflict()
+    public async Task Handle_WhenThePhoneIsAlreadyRegistered_ReturnsConflict()
     {
-        await Handler().Handle(Command("AA1234567"), CancellationToken.None);
+        await Handler().Handle(Command("+998901234567"), CancellationToken.None);
 
-        var result = await Handler().Handle(Command("aa 123 4567"), CancellationToken.None);
+        var result = await Handler().Handle(Command("90 123-45-67"), CancellationToken.None);
 
-        Assert.Equal(ReaderErrors.DocumentAlreadyRegistered, result.Error);
+        Assert.Equal(ReaderErrors.PhoneAlreadyRegistered, result.Error);
         Assert.Single(_readers.Readers);
+    }
+
+    [Fact]
+    public async Task Handle_WhenAnotherPhoneIsUsed_RegistersASecondReader()
+    {
+        await Handler().Handle(Command("+998901234567"), CancellationToken.None);
+
+        var result = await Handler().Handle(Command("+998931112233"), CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(2, _readers.Readers.Count);
     }
 
     [Fact]

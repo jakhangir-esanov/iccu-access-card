@@ -12,18 +12,18 @@ internal static class TestData
     public static readonly Guid UserId = Guid.Parse("01a0da36-9ee4-743b-9eae-d23a48b1ad3f");
 
     public static PersonDetails Student(
-        string documentNumber = "aa 1234567",
         string phone = "90 123 45 67",
-        string lastName = " Karimov ") =>
+        string lastName = " Karimov ",
+        Citizenship? citizenship = Citizenship.Uzbekistan) =>
         new(
             ReaderCategory.Student,
             lastName,
             "Ali",
             " ",
             new DateOnly(2003, 5, 14),
-            phone,
-            DocumentType.Passport,
-            documentNumber);
+            Gender.Male,
+            citizenship,
+            phone);
 
     public static PersonDetails Pupil() =>
         new(
@@ -32,9 +32,9 @@ internal static class TestData
             "Gulnoza",
             null,
             new DateOnly(2014, 2, 10),
-            "+998 93 555 66 77",
-            DocumentType.BirthCertificate,
-            "I-TN 1234567");
+            Gender.Female,
+            Citizenship.Uzbekistan,
+            "+998 93 555 66 77");
 
     public static StoredFile Photo(DateTime createdAt) =>
         StoredFile.Create(".jpg", "image/jpeg", 2048, createdAt);

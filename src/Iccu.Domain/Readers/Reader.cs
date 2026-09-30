@@ -23,11 +23,11 @@ public sealed class Reader
 
     public DateOnly BirthDate { get; private set; }
 
+    public Gender? Gender { get; private set; }
+
+    public Citizenship? Citizenship { get; private set; }
+
     public string Phone { get; private set; } = null!;
-
-    public DocumentType DocumentType { get; private set; }
-
-    public string DocumentNumber { get; private set; } = null!;
 
     public Guid PhotoFileId { get; private set; }
 
@@ -111,8 +111,8 @@ public sealed class Reader
         FirstName = details.FirstName;
         MiddleName = details.MiddleName;
         BirthDate = details.BirthDate;
+        Gender = details.Gender;
+        Citizenship = details.Citizenship;
         Phone = details.Phone;
-        DocumentType = details.DocumentType;
-        DocumentNumber = details.DocumentNumber;
     }
 }

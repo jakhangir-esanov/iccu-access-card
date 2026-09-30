@@ -9,7 +9,6 @@ public static class PersonDetailsNormalizer
         LastName = details.LastName.Trim(),
         FirstName = details.FirstName.Trim(),
         MiddleName = string.IsNullOrWhiteSpace(details.MiddleName) ? null : details.MiddleName.Trim(),
-        Phone = PhoneNumber.Normalize(details.Phone) ?? details.Phone.Trim(),
-        DocumentNumber = DocumentNumber.Normalize(details.DocumentNumber)
+        Phone = PhoneNumber.Normalize(details.Phone, details.Citizenship) ?? details.Phone.Trim()
     };
 }

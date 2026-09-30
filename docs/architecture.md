@@ -105,13 +105,14 @@ Application qatlamida DI konfiguratsiyasi yo'q. MediatR, behavior'lar va validat
 - `iccu.card_number_seq` sequence'i, 1 dan 9 999 999 gacha, hech qachon reset qilinmaydi.
 - Raqam `Reader` insert qilinganda bazaning o'zida beriladi (`DEFAULT nextval`). QR arizalar faqat tasdiqlanganda raqam oladi.
 - Kitobxonlar yumshoq o'chiriladi (`deleted_at`), shuning uchun raqam boshqa odamga qayta berilmaydi.
-- Bitta hujjatga faqat bitta faol kitobxon mumkin: `(document_type, document_number) WHERE deleted_at IS NULL` ustida unique index. Ikki so'rov bir vaqtda kelsa, 409 `Conflict.DuplicateKey` qaytadi.
+- Bitta telefon raqamiga faqat bitta faol kitobxon mumkin. Buni yaratish, tahrirlash va ariza tasdiqlash handler'lari `IsPhoneRegisteredAsync` bilan tekshiradi (`409 Reader.PhoneAlreadyRegistered`). Bazada unique index yo'q: hujjat maydonlari olib tashlanganda (2026-09-30) mavjud yozuvlarda bir xil telefonlar bor edi va index migratsiyani to'xtatib qo'yardi. Telefon normallashtirilgan ko'rinishda (`+` va raqamlar) saqlangani uchun taqqoslash aniq.
+- Hujjat turi va raqami ma'muriyat topshirig'i bilan olib tashlangan. Ularning o'rniga `gender` va `citizenship` bor. Ikkalasi ham ustunda `NULL` bo'lishi mumkin (eski yozuvlar), lekin `PersonDetailsValidator` yangi va tahrirlangan ma'lumotda ularni majburiy qiladi. Telefon qoidasi fuqarolikka bog'liq: O'zbekiston fuqarosiga faqat `+998`, chet el fuqarosiga 8–15 raqamli xalqaro raqam ham mumkin.
 
 ## Qidiruv
 
 `readers.search_text` — stored generated ustun: familiya, ism va otasining ismi kichik harflarda, apostrof variantlari (`‘ ’ ʻ ʼ`) oddiy `'` ga keltirilgan. Ustiga `pg_trgm` GIN index qo'yilgan. Qidiruv matnidagi har bir so'z `LIKE %so'z%` shartiga aylanadi.
 
-Qidiruv matni son yoki hujjat ko'rinishida bo'lsa, qo'shimcha ravishda karta raqami, telefon va hujjat bo'yicha ham izlanadi.
+Qidiruv matni son ko'rinishida bo'lsa, qo'shimcha ravishda karta raqami va telefon bo'yicha ham izlanadi.
 
 ## Fayllar (rasmlar)
 
@@ -119,7 +120,7 @@ Qidiruv matni son yoki hujjat ko'rinishida bo'lsa, qo'shimcha ravishda karta raq
 
 1. **Yuklash.** Frontend rasmni avval alohida yuklaydi va `Guid` oladi: xodim `POST files` (avtorizatsiya bilan), QR anketa to'ldiruvchi `POST public/files` (anonim, rate limit bilan). `UploadFileCommand` kengaytmani (`.jpg`, `.jpeg`, `.png`, `.webp`), hajmni (8 MB) va magic-byte imzosini tekshiradi. Keyin faylni o'zgartirmasdan `IFileStore`ga yozadi va `stored_files` jadvaliga yozuv qo'shadi.
 2. **Bog'lash.** `POST readers`, `PUT readers/{id}` va `POST public/registrations` JSON qabul qiladi, rasm `PhotoFileId` orqali beriladi. Handler fayl mavjudligini tekshiradi (`StoredFile.NotFound`).
-3. **O'qish.** `GET files/{id}/content` faylni oqim sifatida beradi. Pasport rasmlari bo'lgani uchun faqat avtorizatsiya bilan ochiladi (`tofan`da bu endpoint ochiq).
+3. **O'qish.** `GET files/{id}/content` faylni oqim sifatida beradi. Kitobxonlarning shaxsiy rasmlari bo'lgani uchun faqat avtorizatsiya bilan ochiladi (`tofan`da bu endpoint ochiq).
 4. **O'chirish.** Admin `DELETE files/{id}` bilan o'chira oladi, lekin fayl ishlatilayotgan bo'lsa `StoredFile.InUse` qaytadi.
 5. **Tozalash.** "Ishlatilmoqda" degani: o'chirilmagan kitobxonning rasmi yoki Pending arizaning rasmi. Hangfire `DeleteUnusedFilesJob` har soatda `DeleteUnusedFilesCommand`ni yuboradi. U 24 soatdan eski va hech qayerda ishlatilmayotgan fayllarni o'chiradi: almashtirilgan, rad etilgan, muddati o'tgan va hech qachon biriktirilmagan rasmlar.
 

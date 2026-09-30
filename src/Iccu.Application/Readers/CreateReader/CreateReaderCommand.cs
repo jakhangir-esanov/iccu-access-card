@@ -29,10 +29,9 @@ internal sealed class CreateReaderCommandHandler(
     {
         PersonDetails details = request.Details.Normalized();
 
-        if (await readerRepository.IsDocumentRegisteredAsync(
-                details.DocumentType, details.DocumentNumber, cancellationToken: cancellationToken))
+        if (await readerRepository.IsPhoneRegisteredAsync(details.Phone, cancellationToken: cancellationToken))
         {
-            return Result.Failure<CreateReaderResponse>(ReaderErrors.DocumentAlreadyRegistered);
+            return Result.Failure<CreateReaderResponse>(ReaderErrors.PhoneAlreadyRegistered);
         }
 
         if (await storedFileRepository.GetAsync(request.PhotoFileId, cancellationToken) is null)

@@ -47,7 +47,8 @@ public class RegistrationRequestTests
     {
         RegistrationRequest request = TestData.SubmittedPupil(SubmittedAt);
 
-        Assert.Equal(request.DocumentNumber, request.Details.DocumentNumber);
         Assert.Equal(request.Category, request.Details.Category);
+        Assert.Equal(Gender.Female, request.Details.Gender);
+        Assert.Equal(Citizenship.Uzbekistan, request.Details.Citizenship);
     }
 }

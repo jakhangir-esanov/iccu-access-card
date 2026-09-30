@@ -8,6 +8,8 @@ internal sealed record ExportReadersRequest
     public ReaderCategory? Category { get; init; }
     public RegistrationSource? Source { get; init; }
     public CardStatus? Status { get; init; }
+    public Gender? Gender { get; init; }
+    public Citizenship? Citizenship { get; init; }
     public DateOnly? RegisteredFrom { get; init; }
     public DateOnly? RegisteredTo { get; init; }
 }

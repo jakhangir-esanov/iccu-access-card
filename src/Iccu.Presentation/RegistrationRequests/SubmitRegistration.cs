@@ -27,9 +27,9 @@ internal sealed class SubmitRegistration : IEndpoint
                     request.FirstName,
                     request.MiddleName,
                     request.BirthDate,
-                    request.Phone,
-                    request.DocumentType,
-                    request.DocumentNumber),
+                    request.Gender,
+                    request.Citizenship,
+                    request.Phone),
                 request.PhotoFileId,
                 request.ConsentGiven);
 

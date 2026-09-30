@@ -139,7 +139,8 @@ HTTP klient body bo'sh yoki JSON bo'lmagan javobni ham xatoga aylantira olishi k
 |---|---|
 | `UserRole` | 0 Receptionist, 1 Admin |
 | `ReaderCategory` | 0 Pupil (O'quvchi), 1 Student (Talaba), 2 Master (Magistr), 3 PhD, 4 DSc, 5 Professor, 6 Employee (Xizmatchi) |
-| `DocumentType` | 0 Passport (Pasport / ID karta), 1 BirthCertificate (Tug'ilganlik guvohnomasi) |
+| `Gender` | 0 Male (Erkak), 1 Female (Ayol) |
+| `Citizenship` | 0 Uzbekistan (O'zbekiston fuqarosi), 1 Foreign (Chet el fuqarosi) |
 | `RegistrationSource` | 0 Reception (Resepshn), 1 SelfService (QR anketa) |
 | `RegistrationRequestStatus` | 0 Pending, 1 Approved, 2 Rejected, 3 Expired |
 | `CardStatus` (faqat filtr) | 0 Active, 1 ExpiringSoon (30 kun ichida tugaydi), 2 Expired |
@@ -259,7 +260,7 @@ Username saqlashda kichik harfga o'tkaziladi. Faolsizlantirilgan foydalanuvchini
 ```ts
 SubmitRegistrationRequest {
   category: ReaderCategory; lastName: string; firstName: string; middleName?: string | null;
-  birthDate: string; phone: string; documentType: DocumentType; documentNumber: string;
+  birthDate: string; gender: Gender; citizenship: Citizenship; phone: string;
   photoFileId: string; consentGiven: boolean;
 }
 ```
@@ -284,12 +285,12 @@ RegistrationRequestListItem {
   id; photoFileId; code; status: RegistrationRequestStatus; category: ReaderCategory;
   lastName; firstName; middleName: string | null; phone;
   submittedAt; expiresAt; reviewedAt: string | null; reviewedByName: string | null;
-  hasRegisteredDocument: boolean;
+  hasRegisteredPhone: boolean;
 }
 
 RegistrationRequestResponse {
   id; photoFileId; code; status; category; lastName; firstName; middleName: string | null;
-  birthDate; phone; documentType: DocumentType; documentNumber;
+  birthDate; gender: Gender | null; citizenship: Citizenship | null; phone;
   submittedAt; expiresAt; reviewedAt: string | null; reviewedByName: string | null;
   rejectionReason: string | null;
   readerId: string | null;
@@ -298,7 +299,7 @@ RegistrationRequestResponse {
 }
 ```
 
-- `hasRegisteredDocument` / `registeredReaderId`: bu hujjat bilan kitobxon **allaqachon bor**. UI buni ogohlantirish qilib ko'rsatadi va mavjud kitobxonga havola beradi. Bunday arizani tasdiqlab bo'lmaydi (`409 Reader.DocumentAlreadyRegistered`). To'g'ri yo'l — rad etib, eski kartani qayta chop etish.
+- `hasRegisteredPhone` / `registeredReaderId`: shu telefon raqami bilan kitobxon **allaqachon bor** (bir nechta bo'lsa, karta raqami eng kichigi). UI buni ogohlantirish qilib ko'rsatadi va mavjud kitobxonga havola beradi. Bunday arizani tasdiqlab bo'lmaydi (`409 Reader.PhoneAlreadyRegistered`). To'g'ri yo'l — rad etib, eski kartani qayta chop etish.
 - `readerId`: tasdiqlangan arizadan yaratilgan kitobxon.
 - Tahrirlash, tasdiqlash va rad etish faqat `Pending` va muddati o'tmagan arizada ishlaydi: `409 RegistrationRequest.NotPending` / `RegistrationRequest.Expired`.
 - Tasdiqlangandan keyin kitobxon kartochkasiga o'tib, kartani chop etish kerak.
@@ -316,32 +317,31 @@ RegistrationRequestResponse {
 | `DELETE /api/readers/{id}` | Admin | — | — (yumshoq o'chirish) |
 | `GET /api/readers/export` | Admin | ro'yxat filtrlari, paging'siz | `.xlsx` fayl |
 
-Filtr parametrlari (ro'yxat va eksport uchun bir xil): `search`, `category`, `source`, `status` (`CardStatus`), `registeredFrom`, `registeredTo` (`DateOnly`).
+Filtr parametrlari (ro'yxat va eksport uchun bir xil): `search`, `category`, `gender`, `citizenship`, `source`, `status` (`CardStatus`), `registeredFrom`, `registeredTo` (`DateOnly`).
 
 `search` bitta maydon bilan hammasini qidiradi:
 - F.I.Sh. so'zlari (tartibi muhim emas, apostrof variantlari farq qilmaydi);
 - karta raqami (`1` ham, `0000001` ham);
-- telefon (kamida 4 raqam);
-- hujjat raqami (to'liq, bo'sh joy va chiziqchasiz).
+- telefon (kamida 4 raqam).
 
 ```ts
 ReaderListItem {
   id; photoFileId; cardNumber; category; lastName; firstName; middleName: string | null;
-  birthDate; phone; documentType; documentNumberMasked;   // "AA***4567"
+  birthDate; gender: Gender | null; citizenship: Citizenship | null; phone;
   source: RegistrationSource; issuedOn; expiresOn; isExpired: boolean; printCount: number; createdAt;
 }
 
 ReaderResponse {
   id; photoFileId; cardNumber; category; lastName; firstName; middleName: string | null;
-  birthDate; phone; documentType; documentNumber;          // to'liq raqam
+  birthDate; gender: Gender | null; citizenship: Citizenship | null; phone;
   source; issuedOn; expiresOn; isExpired: boolean;
   printCount: number; lastPrintedAt: string | null;
   createdAt; createdByName: string | null; updatedAt: string | null;
 }
 ```
 
-- Ro'yxatda pasport raqami maskalangan, to'liq raqam faqat kartochkada.
-- Bitta hujjatga bitta kitobxon: `409 Reader.DocumentAlreadyRegistered`.
+- `gender` va `citizenship` 2026-09-30 dan oldin yozilgan kitobxon va arizalarda `null` (ular hujjat maydonlari o'rniga qo'shilgan). Yangi yozuvda ikkalasi majburiy, eski yozuvni tahrirlaganda ham to'ldirilishi kerak.
+- Bitta telefon raqamiga bitta kitobxon: `409 Reader.PhoneAlreadyRegistered`. Bazada unique index yo'q (eski yozuvlarda bir xil raqamlar bor), tekshiruv handler'da.
 - O'chirilgan kitobxon hamma joyda `404 Reader.NotFound`. Karta raqami boshqa odamga qayta berilmaydi.
 - Eksport: javob `Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`, `Content-Disposition: attachment; filename=kitobxonlar-20260926.xlsx`. Token kerak bo'lgani uchun `fetch` → blob → yuklab olish havolasi orqali olinadi.
 
@@ -357,6 +357,8 @@ DashboardResponse {
   totals: { total; active; expired; expiringSoon; registeredToday; registeredThisMonth };
   pendingRequests: number;
   byCategory: { category: ReaderCategory; count: number }[];
+  byGender: { gender: Gender | null; count: number }[];              // null: ko'rsatilmagan (eski yozuvlar)
+  byCitizenship: { citizenship: Citizenship | null; count: number }[];
   lastDays: { day: string; count: number }[];   // doim 30 ta, bo'sh kunlar 0 bilan
 }
 
@@ -364,6 +366,8 @@ RegistrationReportResponse {
   from; to; groupBy: ReportGrouping; total: number;
   byPeriod: { period: string; total; reception; selfService }[];   // period: kun yoki oyning 1-sanasi
   byCategory: { category; count }[];
+  byGender: { gender; count }[];
+  byCitizenship: { citizenship; count }[];
   byUser: { userId; fullName; count }[];
 }
 ```
@@ -400,11 +404,9 @@ Frontend foydalanuvchiga xatoni tezroq ko'rsatish uchun shu qoidalarni takrorlay
 | `lastName`, `firstName` | majburiy, ≤ 100, harf bilan boshlanadi; harf, `'`, `ʻ`, `ʼ`, `‘`, `’`, `` ` ``, bo'sh joy, `-`. Regex: `` ^\s*\p{L}[\p{L}\p{M}'ʻʼ‘’` -]*$ `` (`u` flag) |
 | `middleName` | ixtiyoriy, xuddi shu qoida |
 | `birthDate` | `>= 1900-01-01` va bugundan (Toshkent) oldin |
-| `phone` | raqamlardan 9 tasi (`90 123 45 67`) yoki `998` bilan 12 tasi. Server `+998901234567` qilib saqlaydi |
-| `documentType` | enum |
-| `documentNumber` | normallashtirish: katta harf, `space - № # .` olib tashlanadi. Pasport: `^[A-Z]{2}\d{7}$`. Guvohnoma: `^(?=.*\d)[\p{Lu}\d]{6,20}$` |
-
-`I-TN 1234567` → `ITN1234567` bo'lib saqlanadi va kartada ham shunday chiqadi.
+| `gender` | majburiy enum (`null` → `NotNullValidator`) |
+| `citizenship` | majburiy enum (`null` → `NotNullValidator`) |
+| `phone` | O'zbekiston fuqarosi: raqamlardan 9 tasi (`90 123 45 67`) yoki `998` bilan 12 tasi (`Reader.InvalidPhone`). Chet el fuqarosi: O'zbekiston raqami yoki 8–15 raqamli xalqaro raqam, `0` bilan boshlanmaydi (`Reader.InvalidInternationalPhone`). Server `+` va raqamlar qilib saqlaydi: `+998901234567`, `+79012345678` |
 
 ### Boshqalar
 
@@ -435,8 +437,8 @@ Frontend foydalanuvchiga xatoni tezroq ko'rsatish uchun shu qoidalarni takrorlay
 | `User.WrongCurrentPassword` | 400 | parol almashtirish |
 | `User.WeakPassword`, `User.InvalidUsername` | 400 | `errors[]` ichida |
 | `Reader.NotFound` | 404 | kitobxon |
-| `Reader.DocumentAlreadyRegistered` | 409 | yaratish, tahrirlash, tasdiqlash |
-| `Reader.InvalidPhone`, `Reader.InvalidPassport`, `Reader.InvalidBirthCertificate`, `Reader.InvalidBirthDate` | 400 | `errors[]` ichida |
+| `Reader.PhoneAlreadyRegistered` | 409 | yaratish, tahrirlash, tasdiqlash |
+| `Reader.InvalidPhone`, `Reader.InvalidInternationalPhone`, `Reader.InvalidBirthDate` | 400 | `errors[]` ichida |
 | `RegistrationRequest.NotFound` | 404 | ariza |
 | `RegistrationRequest.NotPending`, `RegistrationRequest.Expired` | 409 | tahrirlash, tasdiqlash, rad etish |
 | `RegistrationRequest.ConsentRequired` | 400 | `errors[]` ichida |

@@ -29,9 +29,9 @@ internal sealed class UpdateReader : IEndpoint
                     request.FirstName,
                     request.MiddleName,
                     request.BirthDate,
-                    request.Phone,
-                    request.DocumentType,
-                    request.DocumentNumber),
+                    request.Gender,
+                    request.Citizenship,
+                    request.Phone),
                 request.PhotoFileId);
 
             var result = await sender.Send(command);

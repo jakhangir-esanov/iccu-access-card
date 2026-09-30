@@ -40,21 +40,25 @@ internal sealed partial class PersonDetailsValidator : AbstractValidator<PersonD
             .Must(birthDate => birthDate >= EarliestBirthDate && birthDate < dateTimeProvider.Today)
             .WithError(ReaderErrors.InvalidBirthDate);
 
+        RuleFor(x => x.Gender)
+            .Cascade(CascadeMode.Stop)
+            .NotNull()
+            .IsInEnum();
+
+        RuleFor(x => x.Citizenship)
+            .Cascade(CascadeMode.Stop)
+            .NotNull()
+            .IsInEnum();
+
         RuleFor(x => x.Phone)
-            .Must(phone => PhoneNumber.Normalize(phone) is not null)
-            .WithError(ReaderErrors.InvalidPhone);
+            .Must(phone => PhoneNumber.Normalize(phone, Citizenship.Uzbekistan) is not null)
+            .WithError(ReaderErrors.InvalidPhone)
+            .When(details => details.Citizenship != Citizenship.Foreign);
 
-        RuleFor(x => x.DocumentType).IsInEnum();
-
-        RuleFor(x => x.DocumentNumber)
-            .Must(number => DocumentNumber.IsValid(DocumentType.Passport, number))
-            .WithError(ReaderErrors.InvalidPassport)
-            .When(details => details.DocumentType == DocumentType.Passport);
-
-        RuleFor(x => x.DocumentNumber)
-            .Must(number => DocumentNumber.IsValid(DocumentType.BirthCertificate, number))
-            .WithError(ReaderErrors.InvalidBirthCertificate)
-            .When(details => details.DocumentType == DocumentType.BirthCertificate);
+        RuleFor(x => x.Phone)
+            .Must(phone => PhoneNumber.Normalize(phone, Citizenship.Foreign) is not null)
+            .WithError(ReaderErrors.InvalidInternationalPhone)
+            .When(details => details.Citizenship == Citizenship.Foreign);
     }
 
     [GeneratedRegex(@"^\s*\p{L}[\p{L}\p{M}'ʻʼ‘’` -]*$", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 100)]

@@ -29,9 +29,9 @@ internal sealed class GetRegistrationRequestQueryHandler(IDbConnectionFactory db
                 q.first_name AS {nameof(RegistrationRequestResponse.FirstName)},
                 q.middle_name AS {nameof(RegistrationRequestResponse.MiddleName)},
                 q.birth_date AS {nameof(RegistrationRequestResponse.BirthDate)},
+                q.gender AS {nameof(RegistrationRequestResponse.Gender)},
+                q.citizenship AS {nameof(RegistrationRequestResponse.Citizenship)},
                 q.phone AS {nameof(RegistrationRequestResponse.Phone)},
-                q.document_type AS {nameof(RegistrationRequestResponse.DocumentType)},
-                q.document_number AS {nameof(RegistrationRequestResponse.DocumentNumber)},
                 q.submitted_at AS {nameof(RegistrationRequestResponse.SubmittedAt)},
                 q.expires_at AS {nameof(RegistrationRequestResponse.ExpiresAt)},
                 q.reviewed_at AS {nameof(RegistrationRequestResponse.ReviewedAt)},
@@ -42,10 +42,12 @@ internal sealed class GetRegistrationRequestQueryHandler(IDbConnectionFactory db
                 lpad(existing.card_number::text, 7, '0') AS {nameof(RegistrationRequestResponse.RegisteredReaderCardNumber)}
             FROM iccu.registration_requests q
             LEFT JOIN iccu.users reviewer ON reviewer.id = q.reviewed_by
-            LEFT JOIN iccu.readers existing
-                ON existing.document_type = q.document_type
-               AND existing.document_number = q.document_number
-               AND existing.deleted_at IS NULL
+            LEFT JOIN LATERAL (
+                SELECT r.id, r.card_number
+                FROM iccu.readers r
+                WHERE r.phone = q.phone AND r.deleted_at IS NULL
+                ORDER BY r.card_number
+                LIMIT 1) existing ON TRUE
             WHERE q.id = @Id
             """;
 

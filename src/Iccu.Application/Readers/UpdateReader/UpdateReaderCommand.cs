@@ -26,10 +26,9 @@ internal sealed class UpdateReaderCommandHandler(
 
         PersonDetails details = request.Details.Normalized();
 
-        if (await readerRepository.IsDocumentRegisteredAsync(
-                details.DocumentType, details.DocumentNumber, reader.Id, cancellationToken))
+        if (await readerRepository.IsPhoneRegisteredAsync(details.Phone, reader.Id, cancellationToken))
         {
-            return Result.Failure(ReaderErrors.DocumentAlreadyRegistered);
+            return Result.Failure(ReaderErrors.PhoneAlreadyRegistered);
         }
 
         DateTime utcNow = dateTimeProvider.UtcNow;

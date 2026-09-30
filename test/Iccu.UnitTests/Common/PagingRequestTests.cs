@@ -31,7 +31,7 @@ public class PagingRequestTests
     [Theory]
     [InlineData("last_name; DROP TABLE iccu.readers")]
     [InlineData("search_text")]
-    [InlineData("document_number")]
+    [InlineData("created_by")]
     public void SortField_ForAnythingButAResponseColumn_FallsBackToId(string sortField)
     {
         var paging = new PagingRequest<ReaderListItemResponse>(0, 10, sortField, 1);

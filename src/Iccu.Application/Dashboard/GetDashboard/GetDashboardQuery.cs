@@ -42,6 +42,18 @@ internal sealed class GetDashboardQueryHandler(
             GROUP BY category
             ORDER BY category;
 
+            SELECT gender AS {nameof(GenderCount.Gender)}, COUNT(*)::int AS {nameof(GenderCount.Count)}
+            FROM iccu.readers
+            WHERE deleted_at IS NULL
+            GROUP BY gender
+            ORDER BY gender NULLS LAST;
+
+            SELECT citizenship AS {nameof(CitizenshipCount.Citizenship)}, COUNT(*)::int AS {nameof(CitizenshipCount.Count)}
+            FROM iccu.readers
+            WHERE deleted_at IS NULL
+            GROUP BY citizenship
+            ORDER BY citizenship NULLS LAST;
+
             SELECT
                 (created_at AT TIME ZONE @TimeZone)::date AS {nameof(DailyCount.Day)},
                 COUNT(*)::int AS {nameof(DailyCount.Count)}
@@ -72,6 +84,8 @@ internal sealed class GetDashboardQueryHandler(
         DashboardTotals totals = await grid.ReadSingleAsync<DashboardTotals>();
         int pendingRequests = await grid.ReadSingleAsync<int>();
         List<CategoryCount> byCategory = [.. await grid.ReadAsync<CategoryCount>()];
+        List<GenderCount> byGender = [.. await grid.ReadAsync<GenderCount>()];
+        List<CitizenshipCount> byCitizenship = [.. await grid.ReadAsync<CitizenshipCount>()];
         Dictionary<DateOnly, int> countsByDay = (await grid.ReadAsync<DailyCount>())
             .ToDictionary(daily => daily.Day, daily => daily.Count);
 
@@ -79,6 +93,6 @@ internal sealed class GetDashboardQueryHandler(
             .Select(offset => trendStart.AddDays(offset))
             .Select(day => new DailyCount(day, countsByDay.GetValueOrDefault(day)))];
 
-        return new DashboardResponse(totals, pendingRequests, byCategory, lastDays);
+        return new DashboardResponse(totals, pendingRequests, byCategory, byGender, byCitizenship, lastDays);
     }
 }

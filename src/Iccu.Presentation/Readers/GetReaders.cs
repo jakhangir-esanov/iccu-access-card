@@ -29,6 +29,8 @@ internal sealed class GetReaders : IEndpoint
                 request.Category,
                 request.Source,
                 request.Status,
+                request.Gender,
+                request.Citizenship,
                 request.RegisteredFrom,
                 request.RegisteredTo);
 

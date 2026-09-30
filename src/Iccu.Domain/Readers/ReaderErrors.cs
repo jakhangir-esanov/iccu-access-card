@@ -10,11 +10,11 @@ public static class ReaderErrors
         uz: "Kitobxon topilmadi.",
         ru: "Читатель не найден.");
 
-    public static readonly Error DocumentAlreadyRegistered = Error.Conflict(
-        "Reader.DocumentAlreadyRegistered",
-        en: "A reader with this document is already registered. Reprint the existing card instead of creating a new one.",
-        uz: "Bu hujjat bilan kitobxon allaqachon ro'yxatdan o'tgan. Yangi karta ochish o'rniga mavjud kartani qayta chop eting.",
-        ru: "Читатель с этим документом уже зарегистрирован. Перепечатайте существующую карту вместо создания новой.");
+    public static readonly Error PhoneAlreadyRegistered = Error.Conflict(
+        "Reader.PhoneAlreadyRegistered",
+        en: "A reader with this phone number is already registered. Reprint the existing card instead of creating a new one.",
+        uz: "Bu telefon raqami bilan kitobxon allaqachon ro'yxatdan o'tgan. Yangi karta ochish o'rniga mavjud kartani qayta chop eting.",
+        ru: "Читатель с этим номером телефона уже зарегистрирован. Перепечатайте существующую карту вместо создания новой.");
 
     public static readonly Error InvalidPhone = Error.Problem(
         "Reader.InvalidPhone",
@@ -22,17 +22,11 @@ public static class ReaderErrors
         uz: "Telefon raqami O'zbekiston raqami bo'lishi kerak: +998 XX XXX XX XX.",
         ru: "Номер телефона должен быть узбекским: +998 XX XXX XX XX.");
 
-    public static readonly Error InvalidPassport = Error.Problem(
-        "Reader.InvalidPassport",
-        en: "The passport or ID card number must be two letters followed by seven digits, for example AA1234567.",
-        uz: "Pasport yoki ID karta raqami ikki harf va yetti raqamdan iborat bo'lishi kerak, masalan AA1234567.",
-        ru: "Номер паспорта или ID-карты должен состоять из двух букв и семи цифр, например AA1234567.");
-
-    public static readonly Error InvalidBirthCertificate = Error.Problem(
-        "Reader.InvalidBirthCertificate",
-        en: "The birth certificate number must contain 6 to 20 letters and digits.",
-        uz: "Tug'ilganlik haqidagi guvohnoma raqami 6 tadan 20 tagacha harf va raqamdan iborat bo'lishi kerak.",
-        ru: "Номер свидетельства о рождении должен содержать от 6 до 20 букв и цифр.");
+    public static readonly Error InvalidInternationalPhone = Error.Problem(
+        "Reader.InvalidInternationalPhone",
+        en: "The phone number must be in international format: the country code and number, 8 to 15 digits in total.",
+        uz: "Telefon raqami xalqaro formatda bo'lishi kerak: davlat kodi va raqam, jami 8 tadan 15 tagacha raqam.",
+        ru: "Номер телефона должен быть в международном формате: код страны и номер, всего от 8 до 15 цифр.");
 
     public static readonly Error InvalidBirthDate = Error.Problem(
         "Reader.InvalidBirthDate",

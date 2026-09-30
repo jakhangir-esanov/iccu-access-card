@@ -15,6 +15,8 @@ public sealed record ExportReadersQuery(
     ReaderCategory? Category = null,
     RegistrationSource? Source = null,
     CardStatus? Status = null,
+    Gender? Gender = null,
+    Citizenship? Citizenship = null,
     DateOnly? RegisteredFrom = null,
     DateOnly? RegisteredTo = null) : IQuery<FileResponse>;
 
@@ -33,6 +35,8 @@ internal sealed class ExportReadersQueryHandler(
             request.Category,
             request.Source,
             request.Status,
+            request.Gender,
+            request.Citizenship,
             request.RegisteredFrom,
             request.RegisteredTo,
             dateTimeProvider);
@@ -47,9 +51,9 @@ internal sealed class ExportReadersQueryHandler(
                 readers.middle_name AS {nameof(ReaderExportRow.MiddleName)},
                 readers.category AS {nameof(ReaderExportRow.Category)},
                 readers.birth_date AS {nameof(ReaderExportRow.BirthDate)},
+                readers.gender AS {nameof(ReaderExportRow.Gender)},
+                readers.citizenship AS {nameof(ReaderExportRow.Citizenship)},
                 readers.phone AS {nameof(ReaderExportRow.Phone)},
-                readers.document_type AS {nameof(ReaderExportRow.DocumentType)},
-                readers.document_number AS {nameof(ReaderExportRow.DocumentNumber)},
                 readers.issued_on AS {nameof(ReaderExportRow.IssuedOn)},
                 readers.expires_on AS {nameof(ReaderExportRow.ExpiresOn)},
                 readers.source AS {nameof(ReaderExportRow.Source)},

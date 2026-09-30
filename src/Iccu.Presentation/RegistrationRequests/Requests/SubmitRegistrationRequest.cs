@@ -9,9 +9,9 @@ internal sealed record SubmitRegistrationRequest
     public string FirstName { get; init; } = string.Empty;
     public string? MiddleName { get; init; }
     public DateOnly BirthDate { get; init; }
+    public Gender? Gender { get; init; }
+    public Citizenship? Citizenship { get; init; }
     public string Phone { get; init; } = string.Empty;
-    public DocumentType DocumentType { get; init; }
-    public string DocumentNumber { get; init; } = string.Empty;
     public Guid PhotoFileId { get; init; }
     public bool ConsentGiven { get; init; }
 }

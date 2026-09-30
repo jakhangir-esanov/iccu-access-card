@@ -95,7 +95,7 @@ nginx `/opt/iccu/nginx/certs/fullchain.pem` va `privkey.pem` fayllarini kutadi. 
 2. **Ochiq IP bor, domen yo'q**: `<IP>.sslip.io` nomi bilan Let's Encrypt (`tofan`da ishlatilgan usul).
 3. **Faqat kutubxona Wi-Fi'si**: Markazning ichki CA'si yoki self-signed sertifikat. Bu holda telefonlar ogohlantirish ko'rsatadi, CA'ni qurilmalarga o'rnatish kerak bo'ladi.
 
-HTTPS'siz ishlatmang: anketa orqali pasport ma'lumotlari yuboriladi.
+HTTPS'siz ishlatmang: anketa orqali shaxsiy ma'lumotlar va rasm yuboriladi.
 
 ## 5. Ishga tushirish
 

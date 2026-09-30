@@ -12,8 +12,10 @@ public class GetReadersFilterTests
     private (string WhereSql, DynamicParameters Parameters) Filter(
         CardStatus? status = null,
         string? search = null,
-        ReaderCategory? category = null) =>
-        GetReadersQueryHandler.BuildFilter(search, category, null, status, null, null, _clock);
+        ReaderCategory? category = null,
+        Gender? gender = null,
+        Citizenship? citizenship = null) =>
+        GetReadersQueryHandler.BuildFilter(search, category, null, status, gender, citizenship, null, null, _clock);
 
     [Fact]
     public void BuildFilter_WithoutCriteria_HasNoWhereClause()
@@ -70,5 +72,15 @@ public class GetReadersFilterTests
         Assert.DoesNotContain("karimov", whereSql);
         Assert.Equal("karimov", parameters.Get<string>("Search"));
         Assert.Equal((int)ReaderCategory.Student, parameters.Get<int>("Category"));
+    }
+
+    [Fact]
+    public void BuildFilter_ForGenderAndCitizenship_PassesBothAsParameters()
+    {
+        (string whereSql, DynamicParameters parameters) = Filter(gender: Gender.Female, citizenship: Citizenship.Foreign);
+
+        Assert.Equal("WHERE readers.gender = @Gender AND readers.citizenship = @Citizenship", whereSql);
+        Assert.Equal((int)Gender.Female, parameters.Get<int>("Gender"));
+        Assert.Equal((int)Citizenship.Foreign, parameters.Get<int>("Citizenship"));
     }
 }

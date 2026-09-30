@@ -16,4 +16,4 @@ public sealed record RegistrationRequestListItemResponse(
     DateTime ExpiresAt,
     DateTime? ReviewedAt,
     string? ReviewedByName,
-    bool HasRegisteredDocument);
+    bool HasRegisteredPhone);

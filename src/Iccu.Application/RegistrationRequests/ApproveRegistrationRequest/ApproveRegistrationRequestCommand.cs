@@ -47,10 +47,9 @@ internal sealed class ApproveRegistrationRequestCommandHandler(
             return Result.Failure<ApproveRegistrationRequestResponse>(RegistrationRequestErrors.Expired);
         }
 
-        if (await readerRepository.IsDocumentRegisteredAsync(
-                registrationRequest.DocumentType, registrationRequest.DocumentNumber, cancellationToken: cancellationToken))
+        if (await readerRepository.IsPhoneRegisteredAsync(registrationRequest.Phone, cancellationToken: cancellationToken))
         {
-            return Result.Failure<ApproveRegistrationRequestResponse>(ReaderErrors.DocumentAlreadyRegistered);
+            return Result.Failure<ApproveRegistrationRequestResponse>(ReaderErrors.PhoneAlreadyRegistered);
         }
 
         DateOnly today = dateTimeProvider.Today;
