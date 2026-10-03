@@ -132,6 +132,7 @@ Rasm qayta ishlanmaydi (SkiaSharp yo'q). Kesish va o'lchamni frontend qiladi, EX
 - **Refresh token.** Kuchli tasodifiy qiymat, `iccu_refresh` nomli HttpOnly + Secure + SameSite=Strict cookie'da, `Path=/api/auth` (brauzer ko'radigan manzil; server ichida yo'l `auth/...`). Bazada faqat uning SHA-256 hash'i saqlanadi. Har yangilanishda rotatsiya qilinadi. Allaqachon almashtirilgan token qayta ishlatilsa, foydalanuvchining barcha sessiyalari bekor qilinadi.
 - **Parol.** ASP.NET `PasswordHasher` (PBKDF2). 5 ta xato urinishdan keyin hisob 15 daqiqaga bloklanadi. Login mavjud bo'lmasa ham parol tekshiruviga xuddi shuncha vaqt sarflanadi, shunda javob vaqtidan login borligini bilib bo'lmaydi.
 - **Rollar.** `Admin` va `Receptionist`. Policy'lar: `User` (ikkala rol) va `Admin`. Token `JwtTokenService` (`ITokenService`) tomonidan beriladi.
+- **Koha.** `koha/` endpoint'lari uchun ikkinchi sxema: HTTP Basic (`KohaAuthenticationHandler`, `Koha:Username` va `Koha:Password`). `Policies.Koha` faqat shu sxemani ishlatadi, standart sxema JWT bo'lib qoladi. Koha foydalanuvchi emas, u `users` jadvalida yo'q. Batafsil: [koha-integration.md](koha-integration.md).
 
 ## Real-time
 

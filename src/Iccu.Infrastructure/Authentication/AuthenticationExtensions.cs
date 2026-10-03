@@ -1,6 +1,7 @@
 namespace Iccu.Infrastructure.Authentication;
 
 using Iccu.Domain.Common.Enums;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection;
 using Iccu.Application.Abstractions.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -18,8 +19,17 @@ internal static class AuthenticationExtensions
             .ValidateOnStart();
 
         services
+            .AddOptions<KohaOptions>()
+            .BindConfiguration(KohaOptions.SectionName)
+            .Validate(
+                options => !string.IsNullOrWhiteSpace(options.Username) && !string.IsNullOrWhiteSpace(options.Password),
+                $"{KohaOptions.SectionName}:{nameof(KohaOptions.Username)} and {KohaOptions.SectionName}:{nameof(KohaOptions.Password)} must be set.")
+            .ValidateOnStart();
+
+        services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer();
+            .AddJwtBearer()
+            .AddScheme<AuthenticationSchemeOptions, KohaAuthenticationHandler>(KohaAuthenticationHandler.SchemeName, null);
 
         services.AddAuthorizationBuilder()
             .AddPolicy(Policies.User, policy => policy
@@ -27,7 +37,10 @@ internal static class AuthenticationExtensions
                 .RequireRole(nameof(UserRole.Admin), nameof(UserRole.Receptionist)))
             .AddPolicy(Policies.Admin, policy => policy
                 .RequireAuthenticatedUser()
-                .RequireRole(nameof(UserRole.Admin)));
+                .RequireRole(nameof(UserRole.Admin)))
+            .AddPolicy(Policies.Koha, policy => policy
+                .AddAuthenticationSchemes(KohaAuthenticationHandler.SchemeName)
+                .RequireAuthenticatedUser());
 
         services.AddHttpContextAccessor();
 

@@ -70,6 +70,7 @@ Architecture tests enforce the dependency direction, naming, and `sealed`/`inter
 - There is one user concept: `User` with `UserRole` `Admin` or `Receptionist`; policies `Policies.User` (both) and `Policies.Admin`. Never introduce the word "staff" in types, routes, tables or docs.
 - Readers never log in. They are data records created by users or by approving a QR registration request. Do not propose reader login or self-service profiles unless the user asks.
 - Own JWT (HS256, 15 minutes) plus a rotated refresh token in the `iccu_refresh` HttpOnly cookie; only its SHA-256 hash is stored.
+- Koha is not a `User`. It reads `koha/` endpoints with HTTP Basic (`Koha:Username`/`Koha:Password`, `Policies.Koha`, Basic scheme only). JWT stays the default scheme. See [docs/koha-integration.md](docs/koha-integration.md).
 
 ### Other
 - YAGNI. Add only what a current requirement uses: no speculative options, interfaces, parameters, columns or "might need later" helpers. Delete code, config and columns that nothing reads.

@@ -247,6 +247,7 @@ Tashqaridan barcha yo'llar `/api` ostida, nginx `/api`ni olib tashlab API'ga uza
 | Arizalar | `GET registration-requests`, `GET registration-requests/{id}`, `PUT .../{id}`, `POST .../{id}/approve`, `POST .../{id}/reject` | Foydalanuvchi (Receptionist yoki Admin) |
 | Dashboard va hisobot | `GET dashboard`, `GET reports/registrations?from&to&groupBy` | Foydalanuvchi (Receptionist yoki Admin) |
 | Real-time | `hubs/registrations` (SignalR) | Foydalanuvchi (Receptionist yoki Admin) |
+| Koha | `GET koha/readers`, `GET koha/readers/{cardNumber}/photo` | Koha, HTTP Basic. Batafsil: [koha-integration.md](koha-integration.md) |
 | Holat | `/health` | Ochiq |
 
 ---

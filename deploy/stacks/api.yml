@@ -4,6 +4,8 @@ services:
     environment:
       ConnectionStrings__Database: "Host=postgres;Port=5432;Database=iccu;Username=iccu;Password=${ICCU_DB_PASSWORD}"
       Jwt__SigningKey: ${ICCU_JWT_SIGNING_KEY}
+      Koha__Username: koha
+      Koha__Password: ${ICCU_KOHA_PASSWORD}
     volumes:
       - type: bind
         source: /opt/iccu/files

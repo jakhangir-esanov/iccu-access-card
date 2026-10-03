@@ -69,6 +69,7 @@ ICCU_API_IMAGE=registry.example.uz/iccu-api:v1.0.0
 
 ICCU_DB_PASSWORD=$(openssl rand -hex 16)
 ICCU_JWT_SIGNING_KEY=$(openssl rand -hex 32)
+ICCU_KOHA_PASSWORD=$(openssl rand -hex 24)
 EOF
 ```
 
@@ -76,6 +77,7 @@ EOF
 |---|---|---|
 | `ICCU_DB_PASSWORD` | Postgres (`POSTGRES_PASSWORD`) va API | connection string'dagi `Password` |
 | `ICCU_JWT_SIGNING_KEY` | API, kamida 32 bayt | `Jwt:SigningKey` |
+| `ICCU_KOHA_PASSWORD` | API; Koha administratoriga beriladi (login `koha`) | `Koha:Password` |
 
 Faylni faqat root tahrirlaydigan, `deploy` esa faqat o'qiy oladigan qiling:
 

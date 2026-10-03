@@ -67,6 +67,23 @@ internal static class SwaggerExtensions
             {
                 { jwtSecurityScheme, Array.Empty<string>() }
             });
+
+            var basicSecurityScheme = new OpenApiSecurityScheme
+            {
+                Type = SecuritySchemeType.Http,
+                Scheme = "basic",
+                Description = "Koha credentials for the koha/ endpoints.",
+                Reference = new OpenApiReference
+                {
+                    Id = "Basic",
+                    Type = ReferenceType.SecurityScheme
+                }
+            };
+            options.AddSecurityDefinition(basicSecurityScheme.Reference.Id, basicSecurityScheme);
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                { basicSecurityScheme, Array.Empty<string>() }
+            });
         });
 
         return services;
