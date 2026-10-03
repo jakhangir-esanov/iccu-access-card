@@ -14,6 +14,9 @@ internal sealed class FakeReaderRepository : IReaderRepository
     public Task<Reader?> GetAsync(Guid id, CancellationToken cancellationToken = default) =>
         Task.FromResult(Readers.SingleOrDefault(reader => reader.Id == id && reader.DeletedAt is null));
 
+    public Task<Reader?> GetByCardNumberAsync(int cardNumber, CancellationToken cancellationToken = default) =>
+        Task.FromResult(Readers.SingleOrDefault(reader => reader.CardNumber == cardNumber && reader.DeletedAt is null));
+
     public Task<bool> IsPhoneRegisteredAsync(
         string phone,
         Guid? exceptReaderId = null,

@@ -32,6 +32,9 @@ internal sealed class ReaderConfiguration : IEntityTypeConfiguration<Reader>
             .HasMaxLength(16)
             .IsRequired();
 
+        builder.Property(x => x.IsKohaSynced)
+            .HasDefaultValue(false);
+
         builder.Property<string>(SearchText)
             .HasComputedColumnSql(
                 "translate(lower(last_name || ' ' || first_name || ' ' || coalesce(middle_name, '')), '‘’ʻʼ`´', '''''''''''''')",

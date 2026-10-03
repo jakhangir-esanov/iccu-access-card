@@ -41,6 +41,8 @@ public sealed class Reader
 
     public DateTime? LastPrintedAt { get; private set; }
 
+    public bool IsKohaSynced { get; private set; }
+
     public DateTime CreatedAt { get; private set; }
 
     public Guid CreatedBy { get; private set; }
@@ -97,6 +99,11 @@ public sealed class Reader
     {
         PrintCount++;
         LastPrintedAt = utcNow;
+    }
+
+    public void MarkKohaSynced()
+    {
+        IsKohaSynced = true;
     }
 
     public void MarkDeleted(DateTime utcNow)

@@ -10,7 +10,7 @@ public sealed record GetKohaReadersQuery(PagingRequest<KohaReaderResponse> Pagin
 internal sealed class GetKohaReadersQueryHandler(
     IDbConnectionFactory dbConnectionFactory) : IPagedListQueryHandler<GetKohaReadersQuery, KohaReaderResponse>
 {
-    private const string ReadersCte =
+    internal const string ReadersCte =
         """
         WITH readers AS (
             SELECT
@@ -27,6 +27,7 @@ internal sealed class GetKohaReadersQueryHandler(
                 r.expires_on
             FROM iccu.readers r
             WHERE r.deleted_at IS NULL
+              AND NOT r.is_koha_synced
         )
         """;
 

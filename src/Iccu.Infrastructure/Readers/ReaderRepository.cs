@@ -11,6 +11,11 @@ internal sealed class ReaderRepository(ApplicationDbContext dbContext) : IReader
         return await dbContext.Readers.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 
+    public async Task<Reader?> GetByCardNumberAsync(int cardNumber, CancellationToken cancellationToken = default)
+    {
+        return await dbContext.Readers.SingleOrDefaultAsync(x => x.CardNumber == cardNumber, cancellationToken);
+    }
+
     public async Task<bool> IsPhoneRegisteredAsync(
         string phone,
         Guid? exceptReaderId = null,

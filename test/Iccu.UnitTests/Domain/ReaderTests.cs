@@ -105,4 +105,27 @@ public class ReaderTests
 
         Assert.Equal(UtcNow, reader.DeletedAt);
     }
+
+    [Fact]
+    public void MarkKohaSynced_Should_SetIsKohaSyncedToTrue()
+    {
+        Reader reader = Register();
+
+        Assert.False(reader.IsKohaSynced);
+
+        reader.MarkKohaSynced();
+
+        Assert.True(reader.IsKohaSynced);
+    }
+
+    [Fact]
+    public void MarkKohaSynced_WhenAlreadySynced_RemainsTrue()
+    {
+        Reader reader = Register();
+
+        reader.MarkKohaSynced();
+        reader.MarkKohaSynced();
+
+        Assert.True(reader.IsKohaSynced);
+    }
 }

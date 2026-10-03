@@ -1,19 +1,19 @@
 # ICCU — Koha integratsiyasi
 
-Kutubxonada Koha ishlaydi. ICCU'da ro'yxatga olingan kitobxonlar Kohaga o'tishi kerak. Buning uchun ICCU API'da Koha uchun alohida ikki endpoint bor. Koha (yoki uning plagini, cron skripti) shu endpoint'larga ulanib ma'lumotni o'zi oladi. ICCU Kohaga hech narsa yubormaydi.
+Kutubxonada Koha ishlaydi. ICCU'da ro'yxatga olingan kitobxonlar Kohaga o'tishi kerak. Buning uchun ICCU API'da Koha uchun alohida uch endpoint bor. Koha (yoki uning plagini, cron skripti) shu endpoint'larga ulanib ma'lumotni o'zi oladi. ICCU Kohaga hech narsa yubormaydi.
 
 | | |
 |---|---|
 | Manzil | `https://<server>/api/koha/...` |
 | Tarmoq | Koha serveri kutubxona tarmog'ida turadi, shuning uchun mavjud `/api/` IP allowlist'i yetadi, nginx o'zgarmagan |
 | Autentifikatsiya | HTTP Basic, login `koha`, parol `ICCU_KOHA_PASSWORD` |
-| Sinxronlash | Har safar to'liq ro'yxat, sahifalab |
+| Sinxronlash | Har safar sinxronlanmaganlar ro'yxati, sahifalab |
 
 ## Endpoint'lar
 
 ### `GET koha/readers?first=0&rows=1000`
 
-O'chirilmagan barcha kitobxonlar, karta raqami bo'yicha o'sish tartibida. `rows` ko'pi bilan 1000. Javob `PagedList` shaklida, `Result`ga o'ralmagan:
+O'chirilmagan va Kohaga hali sinxronlanmagan kitobxonlar, karta raqami bo'yicha o'sish tartibida. `rows` ko'pi bilan 1000. Javob `PagedList` shaklida, `Result`ga o'ralmagan:
 
 ```json
 {
@@ -38,11 +38,17 @@ O'chirilmagan barcha kitobxonlar, karta raqami bo'yicha o'sish tartibida. `rows`
 
 Hamma kitobxonni olish uchun `first`ni `rows` qadamida oshirib, `first >= totalCount` bo'lguncha so'rov yuboriladi.
 
-ICCU'da o'chirilgan kitobxon ro'yxatda chiqmaydi.
+ICCU'da o'chirilgan yoki allaqachon sinxronlangan kitobxon ro'yxatda chiqmaydi.
 
 ### `GET koha/readers/{cardNumber}/photo`
 
 Kitobxon rasmi, yuklanganidek (JPEG, PNG yoki WebP), `Content-Type` bilan. `cardNumber` nollar bilan ham, nollarsiz ham beriladi (`0000001` yoki `1`). Kitobxon topilmasa yoki o'chirilgan bo'lsa `404 Reader.NotFound`.
+
+### `POST koha/readers/{cardNumber}/mark-synced`
+
+Kitobxonni Kohaga sinxronlangan deb belgilash (`is_koha_synced = true`). `cardNumber` nollar bilan ham, nollarsiz ham beriladi (`0000001` yoki `1`).
+
+Kitobxon topilmasa yoki o'chirilgan bo'lsa `404 Reader.NotFound`. Muvaffaqiyatli bo'lsa `200 OK` qaytadi. Belgilangandan so'ng, bu kitobxon `GET koha/readers` ro'yxatida qaytib chiqmaydi.
 
 ## Koha maydonlariga moslik
 
@@ -81,6 +87,7 @@ Toifalar (`category`):
 ```bash
 curl -u koha:<parol> "https://<server>/api/koha/readers?rows=2"
 curl -u koha:<parol> -o 0000001.jpg "https://<server>/api/koha/readers/0000001/photo"
+curl -X POST -u koha:<parol> "https://<server>/api/koha/readers/0000001/mark-synced"
 ```
 
 Parolsiz yoki noto'g'ri parol bilan `401` va `WWW-Authenticate: Basic` qaytadi.
