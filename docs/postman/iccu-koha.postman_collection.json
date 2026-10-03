@@ -1,0 +1,213 @@
+{
+  "info": {
+    "name": "ICCU — Koha",
+    "description": "ICCU API'ning Koha uchun endpoint'lari. Collection Variables'da baseUrl va kohaPassword qiymatini kiriting. Batafsil: docs/koha-integration.md",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "basic",
+    "basic": [
+      { "key": "username", "value": "{{kohaUsername}}", "type": "string" },
+      { "key": "password", "value": "{{kohaPassword}}", "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://your-server/api", "type": "string" },
+    { "key": "kohaUsername", "value": "koha", "type": "string" },
+    { "key": "kohaPassword", "value": "", "type": "string" },
+    { "key": "cardNumber", "value": "0000001", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "1. Kitobxonlar ro'yxati (birinchi sahifa)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('200 OK', () => pm.response.to.have.status(200));",
+              "",
+              "const body = pm.response.json();",
+              "",
+              "pm.test('data va totalCount bor', () => {",
+              "    pm.expect(body.data).to.be.an('array');",
+              "    pm.expect(body.totalCount).to.be.a('number');",
+              "});",
+              "",
+              "pm.test('Kitobxon maydonlari to\\'liq', () => {",
+              "    if (body.data.length === 0) { return; }",
+              "    pm.expect(body.data[0]).to.have.all.keys(",
+              "        'cardNumber', 'category', 'lastName', 'firstName', 'middleName', 'birthDate',",
+              "        'gender', 'citizenship', 'phone', 'issuedOn', 'expiresOn');",
+              "    pm.expect(body.data[0].cardNumber).to.match(/^\\d{7}$/);",
+              "});",
+              "",
+              "pm.test('Karta raqami bo\\'yicha o\\'sish tartibida', () => {",
+              "    const numbers = body.data.map(r => r.cardNumber);",
+              "    pm.expect(numbers).to.eql([...numbers].sort());",
+              "});",
+              "",
+              "if (body.data.length > 0) {",
+              "    pm.collectionVariables.set('cardNumber', body.data[0].cardNumber);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/koha/readers?first=0&rows=10",
+          "host": ["{{baseUrl}}"],
+          "path": ["koha", "readers"],
+          "query": [
+            { "key": "first", "value": "0" },
+            { "key": "rows", "value": "10" }
+          ]
+        },
+        "description": "O'chirilmagan kitobxonlar, sahifalab. Keyingi sahifa uchun first'ni rows qadamida oshiring. rows ko'pi bilan 1000. Birinchi kitobxonning karta raqami cardNumber o'zgaruvchisiga yoziladi."
+      }
+    },
+    {
+      "name": "2. Kitobxon rasmi",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('200 OK', () => pm.response.to.have.status(200));",
+              "",
+              "pm.test('Javob rasm', () => {",
+              "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^image\\//);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/koha/readers/{{cardNumber}}/photo",
+          "host": ["{{baseUrl}}"],
+          "path": ["koha", "readers", "{{cardNumber}}", "photo"]
+        },
+        "description": "Karta raqami bo'yicha rasm (0000001 yoki 1). Avval 1-so'rovni yuboring, u cardNumber'ni to'ldiradi."
+      }
+    },
+    {
+      "name": "Himoya",
+      "item": [
+        {
+          "name": "3. Parolsiz — 401",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('401 Unauthorized', () => pm.response.to.have.status(401));",
+                  "",
+                  "pm.test('Basic parol so\\'raladi', () => {",
+                  "    pm.expect(pm.response.headers.get('WWW-Authenticate')).to.match(/^Basic realm=/);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/koha/readers?rows=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["koha", "readers"],
+              "query": [{ "key": "rows", "value": "1" }]
+            }
+          }
+        },
+        {
+          "name": "4. Noto'g'ri parol — 401",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('401 Unauthorized', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                { "key": "username", "value": "{{kohaUsername}}", "type": "string" },
+                { "key": "password", "value": "wrong-password", "type": "string" }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/koha/readers?rows=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["koha", "readers"],
+              "query": [{ "key": "rows", "value": "1" }]
+            }
+          }
+        },
+        {
+          "name": "5. Koha paroli bilan admin endpoint — 401",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('401 Unauthorized', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/readers?rows=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["readers"],
+              "query": [{ "key": "rows", "value": "1" }]
+            },
+            "description": "Koha paroli faqat koha/ endpoint'larini ochadi. Admin endpoint'lari JWT talab qiladi."
+          }
+        },
+        {
+          "name": "6. Mavjud bo'lmagan karta rasmi — 404",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('404 Not Found', () => pm.response.to.have.status(404));",
+                  "",
+                  "pm.test('Reader.NotFound', () => {",
+                  "    pm.expect(pm.response.text()).to.include('Reader.NotFound');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/koha/readers/9999999/photo",
+              "host": ["{{baseUrl}}"],
+              "path": ["koha", "readers", "9999999", "photo"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
